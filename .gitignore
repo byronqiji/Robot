@@ -3,3 +3,12 @@
 ################################################################################
 
 /Output/x86/Debug
+/packages
+/Robot.Business/bin/Debug
+/Robot.Business/obj
+/Robot.Model/bin/Debug
+/Robot.Model/obj
+/Robot.Tests/bin
+/Robot.Tests/obj
+/Robot.Web/bin
+/Robot.Web/obj

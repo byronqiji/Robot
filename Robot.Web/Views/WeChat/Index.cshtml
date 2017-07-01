@@ -1,0 +1,47 @@
+﻿
+@{
+    Layout = null;
+    ViewBag.Title = "Index";
+}
+
+<html>
+<head>
+    <title>Robot</title>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript">
+        var flag;
+        $(function () {
+            flag = 0;
+            setInterval(Monitor, 1000);
+        });
+
+        function Monitor()
+        {
+            if (flag == 0) {
+                flag = 1;
+                $.ajax({
+                    type: "get",
+                    url: "/WeChat/Monitor",
+                    beforeSend: function (XMLHttpRequest) {
+                    },
+                    success: function (data, textStatus) {
+                        $("#spanData").html(data);
+                        flag = 0;
+                    },
+                    complete: function (XMLHttpRequest, textStatus) {
+                    },
+                    error: function () {
+                    }
+                })
+            }
+        }
+    </script>
+</head>
+
+
+<body>
+    <img src="https://login.weixin.qq.com/qrcode/@ViewBag.UUID" />
+    <br />
+    <span id="spanData"></span>
+</body>
+</html>
