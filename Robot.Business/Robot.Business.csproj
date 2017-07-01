@@ -48,6 +48,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -59,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Helper\HttpHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WeChat\State\Login.cs" />
     <Compile Include="WeChat\State\ReadyScan.cs" />
     <Compile Include="WeChat\State\Scaned.cs" />
     <Compile Include="WeChat\UserManager.cs" />
@@ -71,6 +75,9 @@
       <Project>{76697700-494a-434c-8d7c-68586b4b2ec5}</Project>
       <Name>Robot.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

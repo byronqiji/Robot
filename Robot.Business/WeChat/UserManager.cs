@@ -25,6 +25,7 @@ namespace Robot.Business.WeChat
         internal IUserState QRCodeInitial { get; private set; }
         internal IUserState ReadyScan { get; private set; }
         internal IUserState Scaned { get; private set; }
+        internal IUserState Login { get; private set; }
 
         public UserInfo User { get; private set; }
 
@@ -33,6 +34,7 @@ namespace Robot.Business.WeChat
             QRCodeInitial = new QRCodeInitial(this);
             ReadyScan = new ReadyScan(this);
             Scaned = new Scaned(this);
+            Login = new Login(this);
 
             User = new UserInfo();
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace Robot.Model.WeChat
 {
@@ -45,6 +46,24 @@ namespace Robot.Model.WeChat
             get
             {
                 return requestCount++;
+            }
+        }
+
+        public string SKey { get; set; }
+
+        public string SID { get; set; }
+
+        public string UIN { get; set; }
+
+        public string PassTicket { get; set; }
+
+        public CookieCollection Cookies { get; set; }
+        public object DeviceID
+        {
+            get
+            {
+                Random r = new Random();
+                return $"e{r.Next(1000000, 9999999).ToString()}{r.Next(10000000, 99999999).ToString()}";
             }
         }
 
