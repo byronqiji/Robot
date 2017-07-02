@@ -12,3 +12,5 @@
 /Robot.Tests/obj
 /Robot.Web/bin
 /Robot.Web/obj
+/HttpRequestServer/obj
+/Output/x86/Release

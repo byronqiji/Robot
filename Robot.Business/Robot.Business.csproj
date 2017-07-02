@@ -39,7 +39,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>..\output\x86\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -61,7 +61,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper\HttpHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WeChat\State\Login.cs" />
     <Compile Include="WeChat\State\ReadyScan.cs" />
@@ -72,6 +71,10 @@
     <Compile Include="WeChat\State\UserState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HttpRequestServer\Robot.Request.csproj">
+      <Project>{3e537e04-dd6e-43d8-b0aa-8a49ce6529c5}</Project>
+      <Name>Robot.Request</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Robot.Model\Robot.Model.csproj">
       <Project>{76697700-494a-434c-8d7c-68586b4b2ec5}</Project>
       <Name>Robot.Model</Name>
@@ -80,6 +83,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

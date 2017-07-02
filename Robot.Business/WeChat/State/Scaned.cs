@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Robot.Business.Helper;
 using Robot.Model.WeChat;
+using Robot.Request;
 using System.Net;
 using System.Xml;
 

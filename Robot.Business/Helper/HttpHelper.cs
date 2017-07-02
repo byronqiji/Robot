@@ -37,6 +37,7 @@ namespace Robot.Business.Helper
 
         internal static WebResponse GetResponse(string url, CookieCollection cookies)
         {
+            return null;
         }
 
         internal static WebResponse GetResponse(string url, HttpMethod method = HttpMethod.GET, string data = "")

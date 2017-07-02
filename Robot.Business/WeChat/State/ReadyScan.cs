@@ -1,4 +1,4 @@
-﻿using Robot.Business.Helper;
+﻿using Robot.Request;
 
 namespace Robot.Business.WeChat.State
 {
