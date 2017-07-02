@@ -29,7 +29,7 @@ namespace Robot.Business.WeChat.State
 
             string value = HttpHelper.GetResponseValue(url, userManager.User.Cookies);
 
-            return base.Monitor();
+            return value;
         }
     }
 }

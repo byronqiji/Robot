@@ -26,7 +26,7 @@ namespace Robot.Business.WeChat.State
             //window.code=201;
             string value = HttpHelper.GetResponseValue(url);
 
-            if (value.Split('=')[1] == "201")
+            if (value.Split('=')[1].Split(';')[0] == "201")
                 userManager.State = userManager.Scaned;
 
             return value;

@@ -32,7 +32,7 @@ namespace Robot.Business.WeChat.State
             
             string value = HttpHelper.GetResponseValue(url);
             //window.code=201;window.redirect_uri="https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxnewloginpage?ticket=A5ncNUM2NJBYNOpJ49Jd38m2@qrticket_0&uuid=Ia7HTPkEdQ==&lang=zh_CN&scan=1485320697"
-            if (value.Split('=')[1] == "200")
+            if (value.Split('=')[1].Split(';')[0] == "200")
             {
                 SetUserInfo(value.Split('\"')[1] + "&fun=new&version=v2");
                 InitialWeChat();
@@ -62,7 +62,7 @@ namespace Robot.Business.WeChat.State
 
         private void SetUserInfo(string loginUrl)
         {
-            WebResponse response = HttpHelper.GetResponse(loginUrl);
+            WebResponse response = HttpHelper.GetResponse(loginUrl, null);
 
             XmlDocument xd = new XmlDocument();
             xd.LoadXml(HttpHelper.GetResponseValue(response));

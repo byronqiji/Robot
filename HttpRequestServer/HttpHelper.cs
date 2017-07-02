@@ -17,7 +17,20 @@ namespace Robot.Request
             BaseRequest request = new BaseRequest(url);
             return request.GetResponse();
         }
-        
+
+        public static WebResponse GetResponse(string url, CookieCollection cookies)
+        {
+            return CreateRequest(url, cookies).GetResponse();
+        }
+
+        private static BaseRequest CreateRequest(string url, CookieCollection cookies)
+        {
+            BaseRequest request = new BaseRequest(url);
+            request.SetCookies(cookies);
+
+            return request;
+        }
+
         public static string GetResponseValue(WebResponse response)
         {
             string responseValue = string.Empty;
@@ -31,18 +44,19 @@ namespace Robot.Request
 
         public static string GetResponseValue(string url, HttpMethod method, string data)
         {
+            return GetResponseValue(CreateRequest(url, method, data).GetResponse());
+        }
+
+        private static BaseRequest CreateRequest(string url, HttpMethod method, string data)
+        {
             BaseRequest request = new BaseRequest(url, method);
             request.SetData(data);
-
-            return GetResponseValue(request.GetResponse());
+            return request;
         }
 
         public static string GetResponseValue(string url, CookieCollection cookies)
         {
-            BaseRequest request = new BaseRequest(url);
-            request.SetCookies(cookies);
-
-            return GetResponseValue(request.GetResponse());
+            return GetResponseValue(CreateRequest(url, cookies).GetResponse());
         }
     }
 }
