@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace Robot.Model.WeChat
@@ -9,12 +10,16 @@ namespace Robot.Model.WeChat
 
         int tip;
 
+        private List<SyncKeyInfo> syncKeyList;
+
         private ulong requestCount;
         public UserInfo()
         {
             requestCount = DateTimeDelt;
 
             tip = 1;
+
+            syncKeyList = new List<SyncKeyInfo>();
         }
 
         public string UUID { get; set; }
@@ -58,6 +63,7 @@ namespace Robot.Model.WeChat
         public string PassTicket { get; set; }
 
         public CookieCollection Cookies { get; set; }
+
         public object DeviceID
         {
             get
@@ -65,6 +71,34 @@ namespace Robot.Model.WeChat
                 Random r = new Random();
                 return $"e{r.Next(1000000, 9999999).ToString()}{r.Next(10000000, 99999999).ToString()}";
             }
+        }
+
+        public string SyncKey
+        {
+            get
+            {
+                string temp = string.Empty;
+                foreach (SyncKeyInfo syncKey in syncKeyList)
+                {
+                    temp += $"{syncKey.Key}_{syncKey.Val}|";
+                }
+                temp = temp.TrimEnd('|');
+
+                return temp;
+            }
+        }
+
+        public int SyncKeyCount
+        {
+            get
+            {
+                return syncKeyList.Count;
+            }
+        }
+
+        public void AddSyncKey(SyncKeyInfo syncKey)
+        {
+            syncKeyList.Add(syncKey);
         }
 
         public void Dispose()

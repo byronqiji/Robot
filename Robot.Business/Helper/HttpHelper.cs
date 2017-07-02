@@ -14,6 +14,11 @@ namespace Robot.Business.Helper
 
     public class HttpHelper
     {
+        internal static string GetResponseValue(string url, CookieCollection cookies)
+        {
+            return GetResponseValue(GetResponse(url, cookies));
+        }
+
         internal static string GetResponseValue(string url, HttpMethod method = HttpMethod.GET, string data = "")
         {
             return GetResponseValue(GetResponse(url, method, data));
@@ -28,6 +33,10 @@ namespace Robot.Business.Helper
             }
 
             return responseValue;
+        }
+
+        internal static WebResponse GetResponse(string url, CookieCollection cookies)
+        {
         }
 
         internal static WebResponse GetResponse(string url, HttpMethod method = HttpMethod.GET, string data = "")

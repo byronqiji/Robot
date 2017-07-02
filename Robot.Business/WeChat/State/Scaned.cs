@@ -1,13 +1,17 @@
-﻿using Robot.Business.Helper;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Robot.Business.Helper;
+using Robot.Model.WeChat;
 using System.Net;
 using System.Xml;
-using System;
-using Newtonsoft.Json;
 
 namespace Robot.Business.WeChat.State
 {
     public class Scaned : UserState
     {
+        private const string SyncKeyString = "SyncKey";
+        private const string ListString = "List";
+
         public Scaned(UserManager um)
             :base (um)
         { 
@@ -47,6 +51,13 @@ namespace Robot.Business.WeChat.State
             var postData = new { BaseRequest = new { Uin = userManager.User.UIN, Sid = userManager.User.SID, Skey= userManager.User.SKey, DeviceID = userManager.User.DeviceID } };
 
             string value = HttpHelper.GetResponseValue(url, HttpMethod.POST, JsonConvert.SerializeObject(postData));
+
+            var info = JsonConvert.DeserializeObject(value) as JObject;
+
+            for (int i = 0; i < (int)(info[SyncKeyString]["Count"]); ++i)
+            {
+                userManager.User.AddSyncKey(new SyncKeyInfo() { Key = info[SyncKeyString][ListString][i]["Key"].ToString(), Val = info[SyncKeyString][ListString][i]["Val"].ToString() });
+            }
         }
 
         private void SetUserInfo(string loginUrl)
