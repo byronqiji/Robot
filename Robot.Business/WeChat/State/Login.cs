@@ -1,4 +1,8 @@
-﻿using Robot.Request;
+﻿using Newtonsoft.Json;
+using Robot.Model.WeChat;
+using Robot.Request;
+using System;
+using System.IO;
 using System.Text;
 using System.Web;
 
@@ -28,6 +32,55 @@ namespace Robot.Business.WeChat.State
                 $"uin={HttpUtility.UrlEncode(userManager.User.UIN, Encoding.UTF8)}&deviceid={userManager.User.DeviceID}&synckey={HttpUtility.UrlEncode(userManager.User.SyncKey, Encoding.UTF8)}&_={userManager.User.RequestCount}";
 
             string value = HttpHelper.GetResponseValue(url, userManager.User.Cookies);
+
+            using (StreamWriter sw = new StreamWriter(Path + "\\sync.txt", true))
+            {
+                sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\t" + value);
+            }
+
+            //window.synccheck={retcode:"0",selector:"0"}
+            string[] tempArr = value.Trim().Split('=');
+
+            SyncCheck sc = JsonConvert.DeserializeObject<SyncCheck>(tempArr[1]);
+            if (sc.retcode == "0" && sc.selector == "2")
+            {
+                //"BaseRequest" : { "Uin":2545437902,"Sid":"QfLp+Z+FePzvOFoG"},
+                //"SyncKey" : { "Count":4,"List":[{"Key":1,"Val":620310295},{"Key":2,"Val":620310303},{"Key":3,"Val":620310285},{"Key":1000,"Val":1377479086}]},
+                //"rr" :1377482079876};
+
+                var data = new
+                {
+                    BaseRequest = new
+                    {
+                        Uin = userManager.User.UIN,
+                        Sid = userManager.User.SID,
+                    },
+
+                    SyncKey = new
+                    {
+                        Count = userManager.User.SyncKeyCount,
+                        List = userManager.User.SyncKeyList
+                    },
+                    rr = userManager.User.DateTimeDelt,
+                };
+
+                string jsonData = JsonConvert.SerializeObject(data);
+
+                using (StreamWriter sw = new StreamWriter(Path + "\\ + data.txt", true))
+                {
+                    sw.WriteLine(value);
+                }
+
+                //https://webpush.wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid=QfLp+Z+FePzvOFoG&r=1377482079876
+                string u = $"https://webpush.wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={userManager.User.SID}&r={userManager.User.RequestCount}";
+                
+                value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
+
+                using (StreamWriter sw= new StreamWriter(Path + "\\ + message.txt", true))
+                {
+                    sw.WriteLine(value);
+                }
+            }
 
             return value;
         }

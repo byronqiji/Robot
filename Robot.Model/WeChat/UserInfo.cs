@@ -22,6 +22,8 @@ namespace Robot.Model.WeChat
             syncKeyList = new List<SyncKeyInfo>();
         }
 
+        public List<SyncKeyInfo> SyncKeyList { get { return syncKeyList; } }
+
         public string UUID { get; set; }
 
         public int TIP 

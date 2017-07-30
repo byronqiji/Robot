@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WeChat\SyncCheck.cs" />
     <Compile Include="WeChat\SyncKeyInfo.cs" />
     <Compile Include="WeChat\UserInfo.cs" />
   </ItemGroup>
