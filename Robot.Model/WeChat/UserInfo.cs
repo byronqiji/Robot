@@ -6,7 +6,7 @@ namespace Robot.Model.WeChat
 {
     public class UserInfo : IDisposable
     {
-        private static DateTime standardDateTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+        private static DateTime standardDateTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 8, 0, 0));
 
         int tip;
 
