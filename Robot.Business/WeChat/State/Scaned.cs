@@ -2,6 +2,8 @@
 using Newtonsoft.Json.Linq;
 using Robot.Model.WeChat;
 using Robot.Request;
+using System;
+using System.IO;
 using System.Net;
 using System.Xml;
 
@@ -48,9 +50,14 @@ namespace Robot.Business.WeChat.State
             // https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxinit?r=31689187&pass_ticket=7tGcP7LNCPegHGPMhV7Ltvq2vt%252FOpkSapS%252FJVprdMzMDlkN0yq3GUZdGSxciK4W5
             string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxinit?r={userManager.User.DateTimeDelt}&pass_ticket={userManager.User.PassTicket}";
 
-            var postData = new { BaseRequest = new { Uin = userManager.User.UIN, Sid = userManager.User.SID, Skey= userManager.User.SKey, DeviceID = userManager.User.DeviceID } };
+            var postData = new { BaseRequest = new { Uin = userManager.User.UIN, Sid = userManager.User.SID, Skey = userManager.User.SKey, DeviceID = userManager.User.DeviceID } };
 
             string value = HttpHelper.GetResponseValue(url, HttpMethod.POST, JsonConvert.SerializeObject(postData));
+
+            using (StreamWriter sw = new StreamWriter(Path + "\\initial.txt", false))
+            {
+                sw.Write(value);
+            }
 
             var info = JsonConvert.DeserializeObject(value) as JObject;
 

@@ -14,4 +14,7 @@
 /Robot.Web/obj
 /HttpRequestServer/obj
 /Output/x86/Release
+/HttpRequestServer/bin/Debug
+/Robot.Web/Data
+/.vs
 /.vs/Robot/v15/Server/sqlite3
