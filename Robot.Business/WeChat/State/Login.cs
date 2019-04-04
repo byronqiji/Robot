@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Robot.Model.WeChat;
 using Robot.Request;
 using System;
@@ -37,10 +38,13 @@ namespace Robot.Business.WeChat.State
             string value = HttpHelper.GetResponseValue(url, userManager.User.Cookies);
 
             using (StreamWriter sw = new StreamWriter(Path + "\\sync.txt", true))
-            using (StreamWriter x = new StreamWriter(Path + "\\url.txt", true))
             {
-                x.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: {url}");
                 sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\t" + value);
+            }
+
+            using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
+            {
+                sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {url}");
             }
 
             //window.synccheck={retcode:"0",selector:"0"}
@@ -71,7 +75,7 @@ namespace Robot.Business.WeChat.State
 
                 string jsonData = JsonConvert.SerializeObject(data);
 
-                using (StreamWriter sw = new StreamWriter(Path + "\\ + data.txt", true))
+                using (StreamWriter sw = new StreamWriter(DataFilePath, true))
                 {
                     sw.WriteLine(value);
                 }
@@ -79,14 +83,29 @@ namespace Robot.Business.WeChat.State
                 //https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid=XVUX2odG2zc6R02i&skey=@crypt_4af0643b_78ac88387a52679170de6c7e0413f767&lang=zh_CN&pass_ticket=GvuWUeqTBjeVFiCgj0BIPM08%252FAt0v1n9b0cd4mb%252B9yxr%252F2rG7Bh5z%252Fja6A7vVKnV
                 //https://webpush.wx.qq.com   /cgi-bin/mmwebwx-bin/webwxsync?sid=QfLp+Z+FePzvOFoG&r=1377482079876
                 string u = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={userManager.User.SID}&skey={userManager.User.SKey}&lang=zh_CN&pass_ticket={userManager.User.PassTicket}";
-                
+
                 value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
 
-                using (StreamWriter sw = new StreamWriter(Path + "\\ + message.txt", true))
-                using (StreamWriter x = new StreamWriter(Path + "\\url.txt", true))
+                using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
                 {
-                    x.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: {u}");
+                    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {u}");
+                    sw.WriteLine(jsonData);
+                }
+
+                using (StreamWriter sw = new StreamWriter(MessageFilePath, true))
+                {
                     sw.WriteLine(value);
+                }
+
+                var info = JsonConvert.DeserializeObject(value) as JObject;
+
+                if ((int)info[SyncKeyString]["Count"] > 0)
+                {
+                    userManager.User.CleanSyncKey();
+                    for (int i = 0; i < (int)(info[SyncKeyString]["Count"]); ++i)
+                    {
+                        userManager.User.AddSyncKey(new SyncKeyInfo() { Key = info[SyncKeyString][ListString][i]["Key"].ToString(), Val = info[SyncKeyString][ListString][i]["Val"].ToString() });
+                    }
                 }
             }
 

@@ -9,9 +9,6 @@ namespace Robot.Model.WeChat
         private static DateTime standardDateTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 8, 0, 0));
 
         int tip;
-
-        private List<SyncKeyInfo> syncKeyList;
-
         private ulong requestCount;
         public UserInfo()
         {
@@ -19,10 +16,10 @@ namespace Robot.Model.WeChat
 
             tip = 1;
 
-            syncKeyList = new List<SyncKeyInfo>();
+            SyncKeyList = new List<SyncKeyInfo>();
         }
 
-        public List<SyncKeyInfo> SyncKeyList { get { return syncKeyList; } }
+        public List<SyncKeyInfo> SyncKeyList { get; }
 
         public string UUID { get; set; }
 
@@ -37,6 +34,14 @@ namespace Robot.Model.WeChat
                 }
                 else
                     return tip;
+            }
+        }
+
+        public uint BackTimeSpan
+        {
+            get
+            {
+                return (uint)~DateTimeDelt;
             }
         }
 
@@ -80,7 +85,7 @@ namespace Robot.Model.WeChat
             get
             {
                 string temp = string.Empty;
-                foreach (SyncKeyInfo syncKey in syncKeyList)
+                foreach (SyncKeyInfo syncKey in SyncKeyList)
                 {
                     temp += $"{syncKey.Key}_{syncKey.Val}|";
                 }
@@ -94,13 +99,18 @@ namespace Robot.Model.WeChat
         {
             get
             {
-                return syncKeyList.Count;
+                return SyncKeyList.Count;
             }
         }
 
         public void AddSyncKey(SyncKeyInfo syncKey)
         {
-            syncKeyList.Add(syncKey);
+            SyncKeyList.Add(syncKey);
+        }
+
+        public void CleanSyncKey()
+        {
+            SyncKeyList.Clear();
         }
 
         public void Dispose()
