@@ -31,9 +31,9 @@ namespace Robot.Model.MemberInfo
             contactDic = new Dictionary<string, BaseContactModel>();
         }
 
-        public void SetContact(List<ModContactModel> contactList)
+        public void SetContact<T>(List<T> contactList) where T : BaseContactModel
         {
-            foreach (ModContactModel contact in contactList)
+            foreach (T contact in contactList)
             {
                 if (!contactDic.ContainsKey(contact.UserName))
                 {

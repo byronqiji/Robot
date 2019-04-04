@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Robot.Model.MemberInfo;
 using Robot.Model.WeChat;
 using Robot.Request;
 using System;
@@ -61,13 +62,18 @@ namespace Robot.Business.WeChat.State
                 sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}\t{url}");
                 sw.WriteLine(JsonConvert.SerializeObject(postData));
             }
-            
-            var info = JsonConvert.DeserializeObject(value) as JObject;
 
-            for (int i = 0; i < (int)(info[SyncKeyString]["Count"]); ++i)
-            {
-                userManager.User.AddSyncKey(new SyncKeyInfo() { Key = info[SyncKeyString][ListString][i]["Key"].ToString(), Val = info[SyncKeyString][ListString][i]["Val"].ToString() });
-            }
+            InitialContactTree tree = JsonConvert.DeserializeObject<InitialContactTree>(value);
+            tree.Initial();
+            AccountModel.Instance.SetContact(tree.ContactList);
+            AccountModel.Instance.SyncKey = tree.SyncKey;
+
+            //var info = JsonConvert.DeserializeObject(value) as JObject;
+
+            //for (int i = 0; i < (int)(info[SyncKeyString]["Count"]); ++i)
+            //{
+            //    userManager.User.AddSyncKey(new SyncKeyInfo() { Key = info[SyncKeyString][ListString][i]["Key"].ToString(), Val = info[SyncKeyString][ListString][i]["Val"].ToString() });
+            //}
         }
 
         private void SetUserInfo(string loginUrl)

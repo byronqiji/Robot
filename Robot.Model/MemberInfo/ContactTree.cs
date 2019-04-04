@@ -35,8 +35,12 @@ namespace Robot.Model.MemberInfo
         public override List<InitialContactModel> ContactList { get; set; }
     }
 
-    public class ModContactTree : BaseContactTree<ModContactModel>
+    public class MessageContactTree : BaseContactTree<ModContactModel>
     {
+        public int AddMsgCount { get; set; }
+
+        public List<MessageModel> AddMsgList { get; set; }
+
         public int ModContactCount { get; set; }
 
         [JsonProperty("ModContactList")]

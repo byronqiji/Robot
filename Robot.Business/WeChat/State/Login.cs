@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Robot.Model.MemberInfo;
 using Robot.Model.WeChat;
 using Robot.Request;
 using System;
@@ -65,11 +66,7 @@ namespace Robot.Business.WeChat.State
                         Sid = userManager.User.SID,
                     },
 
-                    SyncKey = new
-                    {
-                        Count = userManager.User.SyncKeyCount,
-                        List = userManager.User.SyncKeyList
-                    },
+                    AccountModel.Instance.SyncKey,
                     rr = userManager.User.DateTimeDelt,
                 };
 

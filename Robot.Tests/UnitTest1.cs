@@ -36,7 +36,7 @@ namespace Robot.Tests
                 json = sr.ReadToEnd();
             }
 
-            ModContactTree tree = JsonConvert.DeserializeObject<ModContactTree>(json);
+            MessageContactTree tree = JsonConvert.DeserializeObject<MessageContactTree>(json);
 
             tree.Initial();
 
