@@ -102,14 +102,28 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\HomeControllerTest.cs" />
+    <Compile Include="UnitTest1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\AddMessage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Message.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
+    <None Include="Data\Tree.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Robot.Model\Robot.Model.csproj">
+      <Project>{76697700-494A-434C-8D7C-68586B4B2EC5}</Project>
+      <Name>Robot.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Robot.Web\Robot.Web.csproj">
       <Project>{96E7A7C7-A107-4CA0-8598-26CCF4EBBE96}</Project>
       <Name>Robot.Web</Name>
