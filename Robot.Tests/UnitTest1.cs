@@ -31,7 +31,7 @@ namespace Robot.Tests
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string json = string.Empty;
 
-            using (StreamReader sr = new StreamReader(path + "\\data\\Message.json"))
+            using (StreamReader sr = new StreamReader(path + "\\data\\addMessage.json"))
             {
                 json = sr.ReadToEnd();
             }
@@ -43,6 +43,12 @@ namespace Robot.Tests
             AccountModel.Instance.SetContact(tree.ContactList);
 
             AccountModel.Instance.SyncKey = tree.SyncKey;
+
+            foreach (var msg in tree.AddMsgList)
+            {
+                int s = msg.Content.Replace("<br />", "<br/>").LastIndexOf("<br/>") + "<br/>".Length;
+                string content = msg.Content.Substring(s, msg.Content.Length - s);
+            }
         }
     }
 }

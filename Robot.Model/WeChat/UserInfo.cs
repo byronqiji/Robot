@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Robot.Model.MemberInfo;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -16,10 +17,10 @@ namespace Robot.Model.WeChat
 
             tip = 1;
 
-            SyncKeyList = new List<SyncKeyInfo>();
+            SyncKeyList = new List<SyncKeyItem>();
         }
 
-        public List<SyncKeyInfo> SyncKeyList { get; }
+        public List<SyncKeyItem> SyncKeyList { get; set; }
 
         public string UUID { get; set; }
 
@@ -85,7 +86,7 @@ namespace Robot.Model.WeChat
             get
             {
                 string temp = string.Empty;
-                foreach (SyncKeyInfo syncKey in SyncKeyList)
+                foreach (SyncKeyItem syncKey in SyncKeyList)
                 {
                     temp += $"{syncKey.Key}_{syncKey.Val}|";
                 }
@@ -103,7 +104,7 @@ namespace Robot.Model.WeChat
             }
         }
 
-        public void AddSyncKey(SyncKeyInfo syncKey)
+        public void AddSyncKey(SyncKeyItem syncKey)
         {
             SyncKeyList.Add(syncKey);
         }

@@ -68,6 +68,8 @@ namespace Robot.Business.WeChat.State
             AccountModel.Instance.SetContact(tree.ContactList);
             AccountModel.Instance.SyncKey = tree.SyncKey;
 
+            userManager.User.SyncKeyList = tree.SyncKey.List;
+
             //var info = JsonConvert.DeserializeObject(value) as JObject;
 
             //for (int i = 0; i < (int)(info[SyncKeyString]["Count"]); ++i)

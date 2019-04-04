@@ -26,6 +26,17 @@ namespace Robot.Model.MemberInfo
             }
         }
 
+        public BaseContactModel this[string userName]
+        {
+            get
+            {
+                if (contactDic.ContainsKey(userName))
+                    return contactDic[userName];
+
+                return null;
+            }
+        }
+
         private AccountModel()
         {
             contactDic = new Dictionary<string, BaseContactModel>();

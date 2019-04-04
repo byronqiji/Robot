@@ -13,8 +13,6 @@
         $(function () {
             flag = 0;
             setInterval(Monitor, 3000);
-
-            $("#spanTest").html(~new Date + "|" + new Date);
         });
 
         function Monitor()
@@ -27,7 +25,9 @@
                     beforeSend: function (XMLHttpRequest) {
                     },
                     success: function (data, textStatus) {
-                        $("#spanData").html(data);
+                        var s = $("#spanData").html();
+                        s += data;
+                        $("#spanData").html(s);
                         flag = 0;
                     },
                     complete: function (XMLHttpRequest, textStatus) {
