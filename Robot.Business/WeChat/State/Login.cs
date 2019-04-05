@@ -28,10 +28,10 @@ namespace Robot.Business.WeChat.State
         public override string Monitor()
         {
             string msgs = string.Empty;
-            string url = $"https://webpush.wx.qq.com/cgi-bin/mmwebwx-bin/synccheck?r={userManager.User.DateTimeDelt}&skey={HttpUtility.UrlEncode(userManager.User.SKey, Encoding.UTF8)}&sid={userManager.User.SID}&" +
-                $"uin={HttpUtility.UrlEncode(userManager.User.UIN, Encoding.UTF8)}&deviceid={userManager.User.DeviceID}&synckey={HttpUtility.UrlEncode(userManager.User.SyncKey, Encoding.UTF8)}&_={userManager.User.RequestCount}";
+            string url = $"https://webpush.wx.qq.com/cgi-bin/mmwebwx-bin/synccheck?r={UserInfo.Instance.DateTimeDelt}&skey={HttpUtility.UrlEncode(UserInfo.Instance.SKey, Encoding.UTF8)}&sid={UserInfo.Instance.SID}&" +
+                $"uin={HttpUtility.UrlEncode(UserInfo.Instance.UIN.ToString(), Encoding.UTF8)}&deviceid={UserInfo.Instance.DeviceID}&synckey={HttpUtility.UrlEncode(UserInfo.Instance.SyncKey, Encoding.UTF8)}&_={UserInfo.Instance.RequestCount}";
 
-            string value = HttpHelper.GetResponseValue(url, userManager.User.Cookies);
+            string value = HttpHelper.GetResponseValue(url, UserInfo.Instance.Cookies);
 
             using (StreamWriter sw = new StreamWriter(Path + "\\sync.txt", true))
             {
@@ -46,18 +46,18 @@ namespace Robot.Business.WeChat.State
             string[] tempArr = value.Trim().Split('=');
 
             SyncCheck sc = JsonConvert.DeserializeObject<SyncCheck>(tempArr[1]);
-            if (sc.retcode == "0" && sc.selector == "2")
+            if (sc.retcode == "0" && sc.selector != "0")
             {
                 var data = new
                 {
                     BaseRequest = new
                     {
-                        Uin = userManager.User.UIN,
-                        Sid = userManager.User.SID,
+                        Uin = UserInfo.Instance.UIN,
+                        Sid = UserInfo.Instance.SID,
                     },
 
-                    AccountModel.Instance.SyncKey,
-                    rr = userManager.User.DateTimeDelt,
+                    UserInfo.Instance.SyncKey,
+                    rr = UserInfo.Instance.DateTimeDelt,
                 };
 
                 string jsonData = JsonConvert.SerializeObject(data);
@@ -67,7 +67,7 @@ namespace Robot.Business.WeChat.State
                     sw.WriteLine(value);
                 }
 
-                string u = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={userManager.User.SID}&skey={userManager.User.SKey}&lang=zh_CN&pass_ticket={userManager.User.PassTicket}";
+                string u = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={UserInfo.Instance.SID}&skey={UserInfo.Instance.SKey}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
 
                 value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
 
@@ -85,10 +85,8 @@ namespace Robot.Business.WeChat.State
                 MessageContactTree mct = JsonConvert.DeserializeObject<MessageContactTree>(value);
                 mct.Initial();
 
-                AccountModel.Instance.SetContact(mct.ContactList);
-                AccountModel.Instance.SyncKey = mct.SyncKey;
-
-                userManager.User.SyncKeyList = mct.SyncKey.List;
+                UserInfo.Instance.SetContact(mct.ContactList);
+                UserInfo.Instance.SyncKeyInfo = mct.SyncKey;
 
                 if (mct.AddMsgCount > 0)
                 {
@@ -100,7 +98,24 @@ namespace Robot.Business.WeChat.State
                             continue;
 
                         int s = content.LastIndexOf("<br/>") + "<br/>".Length;
-                        msgs += msg.Content.Substring(s, msg.Content.Length - s) + "<br />";
+                        string message = msg.Content.Substring(s, msg.Content.Length - s) + "<br />";
+                        string sendUser = msg.Content.Substring(0, s);
+
+                        msgs += message;
+
+                        BaseContactModel bcm = UserInfo.Instance[msg.FromUserName];
+                        if (bcm != null)
+                        {
+                            MemberModel mm = bcm[sendUser];
+
+                            if (mm != null)
+                            {
+                                using (StreamWriter sw = new StreamWriter(Path + $"\\{bcm.NickName}_{DateTime.Now.ToString("yyyyMMdd")}"))
+                                {
+                                    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}  {mm.NickName}: {msgs}");
+                                }
+                            }
+                        }
                     }
                 }
             }

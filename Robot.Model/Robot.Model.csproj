@@ -58,7 +58,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MemberInfo\AccountModel.cs" />
     <Compile Include="MemberInfo\BaseContactModel.cs" />
     <Compile Include="MemberInfo\ContactModel.cs" />
     <Compile Include="MemberInfo\ContactTree.cs" />
@@ -66,7 +65,8 @@
     <Compile Include="MemberInfo\MessageModel.cs" />
     <Compile Include="MemberInfo\SyncKeyModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WeChat\BaseRequestModel.cs" />
+    <Compile Include="RequestModel\BaseRequestModel.cs" />
+    <Compile Include="RequestModel\StatusNotifyRequestModel.cs" />
     <Compile Include="WeChat\MessageModel.cs" />
     <Compile Include="WeChat\SendModel.cs" />
     <Compile Include="WeChat\SyncCheck.cs" />

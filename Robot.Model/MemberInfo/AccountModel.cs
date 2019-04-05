@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 
 namespace Robot.Model.MemberInfo
@@ -30,7 +29,7 @@ namespace Robot.Model.MemberInfo
         {
             get
             {
-                if (contactDic.ContainsKey(userName))
+                if (contactDic != null && contactDic.ContainsKey(userName))
                     return contactDic[userName];
 
                 return null;

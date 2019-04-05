@@ -2,25 +2,48 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 
 namespace Robot.Model.WeChat
 {
-    public class UserInfo : IDisposable
+    public class UserInfo
     {
-        private static DateTime standardDateTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 8, 0, 0));
+        private static UserInfo single;
+
+        public static UserInfo Instance
+        {
+            get
+            {
+                if (single != null)
+                    return single;
+
+                UserInfo temp = new UserInfo();
+                Interlocked.CompareExchange(ref single, temp, null);
+
+                return single;
+            }
+        }
+        
+        private static readonly DateTime standardDateTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 8, 0, 0));
 
         int tip;
         private ulong requestCount;
-        public UserInfo()
+
+        private Dictionary<string, BaseContactModel> contactDic;
+
+        public SyncKeyModel SyncKeyInfo { get; set; }
+
+        private UserInfo()
         {
             requestCount = DateTimeDelt;
 
             tip = 1;
+            contactDic = new Dictionary<string, BaseContactModel>();
 
-            SyncKeyList = new List<SyncKeyItem>();
+            //SyncKeyList = new List<SyncKeyItem>();
         }
 
-        public List<SyncKeyItem> SyncKeyList { get; set; }
+        //public List<SyncKeyItem> SyncKeyList { get; set; }
 
         public string UUID { get; set; }
 
@@ -66,13 +89,13 @@ namespace Robot.Model.WeChat
 
         public string SID { get; set; }
 
-        public string UIN { get; set; }
+        public ulong UIN { get; set; }
 
         public string PassTicket { get; set; }
 
         public CookieCollection Cookies { get; set; }
 
-        public object DeviceID
+        public string DeviceID
         {
             get
             {
@@ -86,36 +109,48 @@ namespace Robot.Model.WeChat
             get
             {
                 string temp = string.Empty;
-                foreach (SyncKeyItem syncKey in SyncKeyList)
+                if (SyncKeyInfo?.Count > 0)
                 {
-                    temp += $"{syncKey.Key}_{syncKey.Val}|";
+                    foreach (SyncKeyItem syncKey in SyncKeyInfo.List)
+                    {
+                        temp += $"{syncKey.Key}_{syncKey.Val}|";
+                    }
+                    temp = temp.TrimEnd('|');
                 }
-                temp = temp.TrimEnd('|');
 
                 return temp;
             }
         }
 
-        public int SyncKeyCount
+        public void SetContact<T>(List<T> contactList) where T : BaseContactModel
         {
-            get
+            foreach (T contact in contactList)
             {
-                return SyncKeyList.Count;
+                if (!contactDic.ContainsKey(contact.UserName))
+                {
+                    contactDic.Add(contact.UserName, contact);
+                }
+                else
+                {
+                    if (contact.MemberCount > 0)
+                    {
+                        contactDic[contact.UserName].SetMember(contact.MemberList);
+                    }
+                }
             }
         }
 
-        public void AddSyncKey(SyncKeyItem syncKey)
+        public BaseContactModel this[string userName]
         {
-            SyncKeyList.Add(syncKey);
+            get
+            {
+                if (contactDic != null && contactDic.ContainsKey(userName))
+                    return contactDic[userName];
+
+                return null;
+            }
         }
 
-        public void CleanSyncKey()
-        {
-            SyncKeyList.Clear();
-        }
-
-        public void Dispose()
-        {
-        }
+        public MemberModel User { get; set; }
     }
 }

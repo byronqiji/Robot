@@ -33,6 +33,8 @@ namespace Robot.Model.MemberInfo
         public int Count { get; set; }
 
         public override List<InitialContactModel> ContactList { get; set; }
+
+        public MemberModel User { get; set; }
     }
 
     public class MessageContactTree : BaseContactTree<ModContactModel>

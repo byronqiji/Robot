@@ -20,6 +20,17 @@ namespace Robot.Model.MemberInfo
 
         public abstract int ContactFlag { get; set; }
 
+        public MemberModel this[string userName]
+        {
+            get
+            {
+                if (memberDic != null && memberDic.ContainsKey(userName))
+                    return memberDic[userName];
+
+                return null;
+            }
+        }
+
         internal void Initial()
         {
             if (MemberList == null || MemberList.Count <= 0)

@@ -1,4 +1,6 @@
-﻿namespace Robot.Model.WeChat
+﻿using Robot.Model.RequestModel;
+
+namespace Robot.Model.WeChat
 {
     public class SendModel
     { 

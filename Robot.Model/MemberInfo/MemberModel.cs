@@ -14,4 +14,25 @@
         public string DisplayName{ get; set; } //",
         public string KeyWord{ get; set; } //"
     }
+
+    
+//"Uin": 1126851900,
+//"UserName": "@0af56868868df06c06cf844bfac9649b",
+//"NickName": "指舞",
+//"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=1498014186&username=@0af56868868df06c06cf844bfac9649b&skey=@crypt_4af0643b_f6b02dfd396c359aca828f057fce3a38",
+//"RemarkName": "",
+//"PYInitial": "",
+//"PYQuanPin": "",
+//"RemarkPYInitial": "",
+//"RemarkPYQuanPin": "",
+//"HideInputBarFlag": 0,
+//"StarFriend": 0,
+//"Sex": 1,
+//"Signature": "學著寫繁體字",
+//"AppAccountFlag": 0,
+//"VerifyFlag": 0,
+//"ContactFlag": 0,
+//"WebWxPluginSwitch": 0,
+//"HeadImgFlag": 1,
+//"SnsFlag": 17
 }

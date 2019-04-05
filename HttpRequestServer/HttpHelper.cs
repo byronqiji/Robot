@@ -50,7 +50,8 @@ namespace Robot.Request
         private static BaseRequest CreateRequest(string url, HttpMethod method, string data)
         {
             BaseRequest request = new BaseRequest(url, method);
-            request.SetData(data);
+            if (method == HttpMethod.POST)
+                request.SetData(data);
             return request;
         }
 

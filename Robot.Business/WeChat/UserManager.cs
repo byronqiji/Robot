@@ -27,7 +27,7 @@ namespace Robot.Business.WeChat
         internal IUserState Scaned { get; private set; }
         internal IUserState Login { get; private set; }
 
-        public UserInfo User { get; private set; }
+        //public UserInfo User { get; private set; }
 
         private UserManager()
         {
@@ -36,7 +36,7 @@ namespace Robot.Business.WeChat
             Scaned = new Scaned(this);
             Login = new Login(this);
 
-            User = new UserInfo();
+            //User = new UserInfo();
         }
 
         public void Start()

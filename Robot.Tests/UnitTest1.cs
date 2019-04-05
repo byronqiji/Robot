@@ -3,6 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Robot.Model.MemberInfo;
+using Robot.Model.WeChat;
 
 namespace Robot.Tests
 {
@@ -40,9 +41,9 @@ namespace Robot.Tests
 
             tree.Initial();
 
-            AccountModel.Instance.SetContact(tree.ContactList);
+            UserInfo.Instance.SetContact(tree.ContactList);
 
-            AccountModel.Instance.SyncKey = tree.SyncKey;
+            UserInfo.Instance.SyncKeyInfo = tree.SyncKey;
 
             foreach (var msg in tree.AddMsgList)
             {

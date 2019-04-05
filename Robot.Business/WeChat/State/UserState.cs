@@ -30,7 +30,7 @@ namespace Robot.Business.WeChat.State
 
         public string DataFilePath => Path + $"\\data{DateTime.Now.ToString("yyyyMMdd")}.txt";
 
-        public string InitialFilePath => Path + $"initial{DateTime.Now.ToString("yyyyMMdd")}.txt";
+        public string InitialFilePath => Path + $"\\initial{DateTime.Now.ToString("yyyyMMdd")}.txt";
 
         public virtual string Monitor()
         {

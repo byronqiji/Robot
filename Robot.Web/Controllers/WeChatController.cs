@@ -1,4 +1,5 @@
 ﻿using Robot.Business.WeChat;
+using Robot.Model.WeChat;
 using System.Threading;
 using System.Web.Mvc;
 
@@ -11,7 +12,7 @@ namespace Robot.Web.Controllers
         {
             UserManager.Single.Start();
 
-            ViewBag.UUID = UserManager.Single.User.UUID;
+            ViewBag.UUID = UserInfo.Instance.UUID;
 
             return View();
         }
