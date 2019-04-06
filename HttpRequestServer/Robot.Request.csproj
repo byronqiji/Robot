@@ -64,6 +64,11 @@
     <Compile Include="HttpRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Robot.Model\Robot.Model.csproj">
+      <Project>{76697700-494A-434C-8D7C-68586B4B2EC5}</Project>
+      <Name>Robot.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

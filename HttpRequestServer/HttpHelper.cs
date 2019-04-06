@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Robot.Model.WeChat;
+using System.IO;
 using System.Net;
 
 namespace Robot.Request
@@ -50,6 +51,7 @@ namespace Robot.Request
         private static BaseRequest CreateRequest(string url, HttpMethod method, string data)
         {
             BaseRequest request = new BaseRequest(url, method);
+            request.SetCookies(UserInfo.Instance.Cookies);
             if (method == HttpMethod.POST)
                 request.SetData(data);
             return request;

@@ -64,10 +64,8 @@ namespace Robot.Business.WeChat.State
             using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
                 sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}\t{url}\t{JsonConvert.SerializeObject(snrm)}");
 
-            //using (StreamWriter sw = new StreamWriter(Path + "\\getcontact.txt", true))
-            //    sw.Write(value);
-
-            url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}&r={UserInfo.Instance.DateTimeDelt}&seq=0&skey=@{UserInfo.Instance.SKey}";
+            //      https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?pass_ticket=FO8DBZYiIesD8fdeMz%252BCMSy%252BFnHX47T9PODKmdNV2CMeFiAJTRPm83wvA7KRSdxS&r=1554558277262&seq=0&skey=@crypt_4af0643b_7d8cdcb1c6f70dcbb615430044a72142
+            url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?pass_ticket={UserInfo.Instance.PassTicket}&r={UserInfo.Instance.DateTimeDelt}&seq=0&skey=@{UserInfo.Instance.SKey}";
             value = HttpHelper.GetResponseValue(url, HttpMethod.GET, null);
             
             using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
