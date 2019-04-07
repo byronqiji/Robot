@@ -2,7 +2,7 @@
 
 namespace Robot.Model.MemberInfo
 {
-    public abstract class BaseContactModel
+    public class BaseContactModel
     {
         protected Dictionary<string, MemberModel> memberDic;
 
@@ -18,7 +18,7 @@ namespace Robot.Model.MemberInfo
 
         public List<MemberModel> MemberList { get; set; }
 
-        public abstract int ContactFlag { get; set; }
+        public virtual int ContactFlag { get; set; }
 
         public MemberModel this[string userName]
         {
@@ -49,6 +49,8 @@ namespace Robot.Model.MemberInfo
             {
                 if (!memberDic.ContainsKey(member.UserName))
                     memberDic.Add(member.UserName, member);
+                else
+                    memberDic[member.UserName] = member;
             }
         }
     }

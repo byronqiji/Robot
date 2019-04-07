@@ -59,9 +59,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MemberInfo\BaseContactModel.cs" />
+    <Compile Include="RequestModel\BatchRequestModel.cs" />
     <Compile Include="MemberInfo\ContactModel.cs" />
     <Compile Include="MemberInfo\ContactTree.cs" />
     <Compile Include="MemberInfo\MemberModel.cs" />
+    <Compile Include="MemberInfo\MemberTree.cs" />
     <Compile Include="MemberInfo\MessageModel.cs" />
     <Compile Include="MemberInfo\SyncKeyModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

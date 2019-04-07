@@ -22,7 +22,11 @@ namespace Robot.Model.MemberInfo
                 if (contact == null)
                     continue;
 
-                contactDic.Add(contact.UserName, contact);
+                if (!contactDic.ContainsKey(contact.UserName))
+                    contactDic.Add(contact.UserName, contact);
+                else
+                    contactDic[contact.UserName] = contact;
+
                 contact.Initial();
             }
         }

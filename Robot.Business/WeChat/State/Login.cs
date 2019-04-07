@@ -85,7 +85,7 @@ namespace Robot.Business.WeChat.State
                 MessageContactTree mct = JsonConvert.DeserializeObject<MessageContactTree>(value);
                 mct.Initial();
 
-                UserInfo.Instance.SetContact(mct.ContactList);
+                //UserInfo.Instance.SetContact(mct.ContactList);
                 UserInfo.Instance.SyncKeyInfo = mct.SyncKey;
 
                 if (mct.AddMsgCount > 0)
@@ -112,7 +112,7 @@ namespace Robot.Business.WeChat.State
                             {
                                 using (StreamWriter sw = new StreamWriter(Path + $"\\{bcm.NickName}_{DateTime.Now.ToString("yyyyMMdd")}"))
                                 {
-                                    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}  {mm.NickName}: {msgs}");
+                                    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {mm.DisplayName ?? mm.NickName}: {msgs}");
                                 }
                             }
                         }

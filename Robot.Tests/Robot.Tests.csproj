@@ -111,6 +111,9 @@
     <None Include="Data\AddMessage.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\MemberTree.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Message.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

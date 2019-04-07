@@ -7,6 +7,7 @@ using Robot.Request;
 using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Xml;
 
 namespace Robot.Business.WeChat.State
@@ -28,8 +29,6 @@ namespace Robot.Business.WeChat.State
 
         public override string Monitor()
         {
-            //                          https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=oboytYOOQA==&tip=0&r=474606286&_=1554303542497
-            //                          https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=Yd5gXvu2mQ==&tip=1&r=1181519240&_=1497762066796
             //                          https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=4a4qFGUpiw==&tip=0&r=475841793&_=1554302308495
             string url = string.Format("https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid={0}&tip={2}&_={1}", UserInfo.Instance.UUID, UserInfo.Instance.RequestCount, UserInfo.Instance.TIP);
             
@@ -73,6 +72,55 @@ namespace Robot.Business.WeChat.State
 
             using (StreamWriter sw = new StreamWriter(Path + "\\getcontact.txt", true))
                 sw.Write(value);
+
+            MemberTree memberTree = JsonConvert.DeserializeObject<MemberTree>(value);
+
+            BatchRequestModel brm = BatchRequestModel.Create();
+            for (int i = 0; i < memberTree.MemberCount; ++i)
+            {
+                brm.Count++;
+                brm.List.AddLast(new BatchItem { UserName = memberTree.MemberList[i].UserName });
+                if (i > 0 && i % 50 == 0)
+                {
+                    url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={UserInfo.Instance.DateTimeDelt}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
+
+                    string json = JsonConvert.SerializeObject(brm);
+                    using (StreamWriter sw = new StreamWriter(Path + "\\batch.txt", true))
+                    {
+                        sw.WriteLine(json);
+                    }
+
+                    value = HttpHelper.GetResponseValue(url, HttpMethod.POST, json);
+                    InitialContactTree tree = JsonConvert.DeserializeObject<InitialContactTree>(value);
+                    tree.Initial();
+                    UserInfo.Instance.SetContact(tree.ContactList);
+
+                    brm.Count = 0;
+                    brm.List.Clear();
+
+                    Thread.Sleep(100);
+                }
+            }
+
+            if (brm.Count > 0)
+            {
+                url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={UserInfo.Instance.DateTimeDelt}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
+
+                string json = JsonConvert.SerializeObject(brm);
+                using (StreamWriter sw = new StreamWriter(Path + "\\batch.txt", true))
+                {
+                    sw.WriteLine(json);
+                }
+
+                value = HttpHelper.GetResponseValue(url, HttpMethod.POST, json);
+                using (StreamWriter sw = new StreamWriter(Path + "\\member.txt", true))
+                {
+                    sw.WriteLine(value);
+                }
+                InitialContactTree tree = JsonConvert.DeserializeObject<InitialContactTree>(value);
+                tree.Initial();
+                UserInfo.Instance.SetContact(tree.ContactList);
+            }
 
             //url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={UserInfo.Instance.DateTimeDelt}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
 

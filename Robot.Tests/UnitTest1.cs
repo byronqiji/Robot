@@ -51,5 +51,19 @@ namespace Robot.Tests
                 string content = msg.Content.Substring(s, msg.Content.Length - s);
             }
         }
+
+        [TestMethod]
+        public void TestMemberTree()
+        {
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            string json = string.Empty;
+
+            using (StreamReader sr = new StreamReader(path + "\\data\\MemberTree.json"))
+            {
+                json = sr.ReadToEnd();
+            }
+
+            MemberTree tree = JsonConvert.DeserializeObject<MemberTree>(json);
+        }
     }
 }
