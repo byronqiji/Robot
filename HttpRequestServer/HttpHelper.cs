@@ -32,15 +32,25 @@ namespace Robot.Request
             return request;
         }
 
-        public static string GetResponseValue(WebResponse response)
+        public static string GetResponseValue(WebResponse response, int i = 0)
         {
-            string responseValue = string.Empty;
-            using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+            try
             {
-                responseValue = sr.ReadToEnd();
-            }
+                string responseValue = string.Empty;
+                using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+                {
+                    responseValue = sr.ReadToEnd();
+                }
 
-            return responseValue;
+                return responseValue;
+            }
+            catch
+            {
+                if (i < 10)
+                    return GetResponseValue(response, ++i);
+
+                return string.Empty;
+            }
         }
 
         public static string GetResponseValue(string url, HttpMethod method, string data)

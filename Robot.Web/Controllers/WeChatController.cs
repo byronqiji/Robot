@@ -22,7 +22,14 @@ namespace Robot.Web.Controllers
             if (UserManager.Single.State == null)
                 Thread.Sleep(1000);
 
-            return UserManager.Single.State.Monitor();
+            try
+            {
+                return UserManager.Single.State.Monitor();
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }

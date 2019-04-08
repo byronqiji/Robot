@@ -19,3 +19,4 @@
 /.vs
 /.vs/Robot/v15/Server/sqlite3
 /Robot.Web/Datainitial20190404.txt
+/Robot.Web/Robot.Web.csproj.user
