@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Robot.Model.MemberInfo;
+using Robot.Model.RequestModel;
 using Robot.Model.WeChat;
 using Robot.Request;
 using System;
@@ -108,9 +109,23 @@ namespace Robot.Business.WeChat.State
 
 
                                 BaseContactModel bcm = UserInfo.Instance[msg.FromUserName];
+                                if (bcm == null)
+                                {
+                                    GetContact(msg.FromUserName);
+                                }
+
+                                bcm = UserInfo.Instance[msg.FromUserName];
+
                                 if (bcm != null)
                                 {
                                     MemberModel mm = bcm[sendUser];
+
+                                    if (string.IsNullOrEmpty(mm.NickName) && string.IsNullOrEmpty(mm.DisplayName))
+                                    {
+                                        GetContact(msg.FromUserName);
+                                    }
+
+                                    mm = UserInfo.Instance[msg.FromUserName][sendUser];
 
                                     if (mm != null)
                                     {
@@ -132,6 +147,30 @@ namespace Robot.Business.WeChat.State
             }
 
             return msgs;
+        }
+
+        private void GetContact(string userName)
+        {
+            string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={UserInfo.Instance.DateTimeDelt}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
+
+            BatchRequestModel brm = BatchRequestModel.Create();
+            brm.Count = 1;
+            brm.List.AddLast(new BatchItem { UserName = userName });
+
+            string json = JsonConvert.SerializeObject(brm);
+            using (StreamWriter sw = new StreamWriter(Path + "\\batch.txt", true))
+            {
+                sw.WriteLine(json);
+            }
+
+            string value = HttpHelper.GetResponseValue(url, HttpMethod.POST, json);
+            using (StreamWriter sw = new StreamWriter(Path + "\\member.txt", true))
+            {
+                sw.WriteLine(value);
+            }
+            InitialContactTree tree = JsonConvert.DeserializeObject<InitialContactTree>(value);
+            tree.Initial();
+            UserInfo.Instance.SetContact(tree.ContactList);
         }
     }
 }
