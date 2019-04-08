@@ -13,6 +13,8 @@
         $(function () {
             flag = 0;
             setInterval(Monitor, 3000);
+
+            $("#spanTest").html(~new Date + "|" + new Date);
         });
 
         function Monitor()
@@ -40,6 +42,7 @@
 
 
 <body>
+    <span id="spanTest"></span>
     <img src="https://login.weixin.qq.com/qrcode/@ViewBag.UUID" />
     <br />
     <span id="spanData"></span>

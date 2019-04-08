@@ -29,7 +29,13 @@ namespace Robot.Business.WeChat.State
 
         public override string Monitor()
         {
+            //473737136
+            //474606286
+            //474606286
+            //474618627
+            //                          https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=oboytYOOQA==&tip=0&r=474606286&_=1554303542497
             //                          https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=Yd5gXvu2mQ==&tip=1&r=1181519240&_=1497762066796
+            //                          https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=4a4qFGUpiw==&tip=0&r=475841793&_=1554302308495
             string url = string.Format("https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid={0}&tip={2}&_={1}", userManager.User.UUID, userManager.User.RequestCount, userManager.User.TIP);
             
             string value = HttpHelper.GetResponseValue(url);
@@ -47,8 +53,16 @@ namespace Robot.Business.WeChat.State
 
         private void InitialWeChat()
         {
+            // 475632069
+            // 475852637
+            // 474763905
+            // 474680984
+            // 474618627
+            // 86400000
+            // https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxnewloginpage?ticket=ATeVaOx6uBB4hfMYOz66c26v@qrticket_0&uuid=4a4qFGUpiw==&lang=zh_CN&scan=1554302319&fun=new&version=v2&lang=zh_CN
             // https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxinit?r=31689187&pass_ticket=7tGcP7LNCPegHGPMhV7Ltvq2vt%252FOpkSapS%252FJVprdMzMDlkN0yq3GUZdGSxciK4W5
-            string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxinit?r={userManager.User.DateTimeDelt}&pass_ticket={userManager.User.PassTicket}";
+            // https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxinit?r=475852637&lang=zh_CN&pass_ticket=A2i9g98QReOimAFpX1XuB6jQ%252Fqtm%252F3DFsg72UzzWHtHMhVevsKux9pWpp%252B7NvBFL
+            string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxinit?r={userManager.User.DateTimeDelt}&pass_ticket={userManager.User.PassTicket}&lang=zh_CN";
 
             var postData = new { BaseRequest = new { Uin = userManager.User.UIN, Sid = userManager.User.SID, Skey = userManager.User.SKey, DeviceID = userManager.User.DeviceID } };
 
