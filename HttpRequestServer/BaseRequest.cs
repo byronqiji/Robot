@@ -21,9 +21,19 @@ namespace Robot.Request
             httpWebRequest.Date = DateTime.Now;
         }
 
-        internal WebResponse GetResponse()
+        public WebResponse GetResponse(int i = 0)
         {
-            return httpWebRequest.GetResponse();
+            try
+            {
+                return httpWebRequest.GetResponse();
+            }
+            catch
+            {
+                if (i < 0)
+                    return GetResponse(++i);
+
+                return null;
+            }
         }
 
         public void SetData(string data)

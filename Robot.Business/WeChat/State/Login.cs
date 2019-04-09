@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Robot.Model.MemberInfo;
+using Robot.Model.RequestModel;
 using Robot.Model.WeChat;
 using Robot.Request;
 using System;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Web;
 
@@ -45,82 +46,138 @@ namespace Robot.Business.WeChat.State
             
             string[] tempArr = value.Trim().Split('=');
 
-            SyncCheck sc = JsonConvert.DeserializeObject<SyncCheck>(tempArr[1]);
-            if (sc.retcode == "0" && sc.selector != "0")
+            if (tempArr.Length >= 2)
             {
-                var data = new
+                SyncCheck sc = JsonConvert.DeserializeObject<SyncCheck>(tempArr[1]);
+                if (sc.retcode == "0" && sc.selector != "0")
                 {
-                    BaseRequest = new
+                    var data = new
                     {
-                        Uin = UserInfo.Instance.UIN,
-                        Sid = UserInfo.Instance.SID,
-                    },
-
-                    UserInfo.Instance.SyncKey,
-                    rr = UserInfo.Instance.DateTimeDelt,
-                };
-
-                string jsonData = JsonConvert.SerializeObject(data);
-
-                using (StreamWriter sw = new StreamWriter(DataFilePath, true))
-                {
-                    sw.WriteLine(value);
-                }
-
-                string u = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={UserInfo.Instance.SID}&skey={UserInfo.Instance.SKey}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
-
-                value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
-
-                using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
-                {
-                    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {u}");
-                    sw.WriteLine(jsonData);
-                }
-
-                using (StreamWriter sw = new StreamWriter(MessageFilePath, true))
-                {
-                    sw.WriteLine(value);
-                }
-
-                MessageContactTree mct = JsonConvert.DeserializeObject<MessageContactTree>(value);
-                mct.Initial();
-
-                //UserInfo.Instance.SetContact(mct.ContactList);
-                UserInfo.Instance.SyncKeyInfo = mct.SyncKey;
-
-                if (mct.AddMsgCount > 0)
-                {
-                    foreach (var msg in mct.AddMsgList)
-                    {
-                        string content = msg.Content.Replace("<br />", "<br/>");
-
-                        if (string.IsNullOrEmpty(content) || !content.Contains("<br/>"))
-                            continue;
-
-                        int s = content.LastIndexOf("<br/>") + "<br/>".Length;
-                        string message = msg.Content.Substring(s, msg.Content.Length - s) + "<br />";
-                        string sendUser = msg.Content.Substring(0, s);
-
-                        msgs += message;
-
-                        BaseContactModel bcm = UserInfo.Instance[msg.FromUserName];
-                        if (bcm != null)
+                        BaseRequest = new
                         {
-                            MemberModel mm = bcm[sendUser];
+                            Uin = UserInfo.Instance.UIN,
+                            Sid = UserInfo.Instance.SID,
+                        },
 
-                            if (mm != null)
+                        SyncKey = UserInfo.Instance.SyncKeyInfo,
+                        rr = UserInfo.Instance.DateTimeDelt,
+                    };
+
+                    string jsonData = JsonConvert.SerializeObject(data);
+
+                    using (StreamWriter sw = new StreamWriter(DataFilePath, true))
+                    {
+                        sw.WriteLine(value);
+                    }
+
+                    string u = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={UserInfo.Instance.SID}&skey={UserInfo.Instance.SKey}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
+
+                    //value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
+
+                    WebResponse webResponse = HttpHelper.CreateRequest(url, HttpMethod.POST, jsonData).GetResponse();
+                    value = HttpHelper.GetResponseValue(webResponse);
+
+                    CookieCollection cookies = ((HttpWebResponse)webResponse).Cookies;
+                    if (cookies != null && cookies.Count > 0)
+                        UserInfo.Instance.Cookies = ((HttpWebResponse)webResponse).Cookies;
+
+                    using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
+                    {
+                        sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {u}");
+                        sw.WriteLine(jsonData);
+                    }
+
+                    using (StreamWriter sw = new StreamWriter(MessageFilePath, true))
+                    {
+                        sw.WriteLine(value);
+                    }
+
+                    try
+                    {
+                        MessageContactTree mct = JsonConvert.DeserializeObject<MessageContactTree>(value);
+                        mct.Initial();
+
+                        //UserInfo.Instance.SetContact(mct.ContactList);
+                        if (mct.SyncKey.Count > 0)
+                            UserInfo.Instance.SyncKeyInfo = mct.SyncKey;
+
+                        if (mct.AddMsgCount > 0)
+                        {
+                            foreach (var msg in mct.AddMsgList)
                             {
-                                using (StreamWriter sw = new StreamWriter(Path + $"\\{bcm.NickName}_{DateTime.Now.ToString("yyyyMMdd")}"))
+                                string content = msg.Content.Replace("<br />", "<br/>");
+
+                                if (string.IsNullOrEmpty(content) || !content.Contains("<br/>"))
+                                    continue;
+
+                                int s = content.LastIndexOf("<br/>") + "<br/>".Length;
+                                string message = msg.Content.Substring(s, msg.Content.Length - s);
+                                string sendUser = msg.Content.Substring(0, s - ":<br/>".Length);
+
+
+                                BaseContactModel bcm = UserInfo.Instance[msg.FromUserName];
+                                if (bcm == null)
                                 {
-                                    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {mm.DisplayName ?? mm.NickName}: {msgs}");
+                                    GetContact(msg.FromUserName);
                                 }
+
+                                bcm = UserInfo.Instance[msg.FromUserName];
+
+                                if (bcm != null)
+                                {
+                                    MemberModel mm = bcm[sendUser];
+
+                                    if (string.IsNullOrEmpty(mm.NickName) && string.IsNullOrEmpty(mm.DisplayName))
+                                    {
+                                        GetContact(msg.FromUserName);
+                                    }
+
+                                    mm = UserInfo.Instance[msg.FromUserName][sendUser];
+
+                                    if (mm != null)
+                                    {
+                                        using (StreamWriter sw = new StreamWriter(Path + $"\\{bcm.NickName}_{DateTime.Now.ToString("yyyyMMdd")}.txt", true))
+                                        {
+                                            sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {(string.IsNullOrEmpty(mm.DisplayName) ? mm.NickName : mm.DisplayName)}: {message}");
+                                        }
+                                    }
+                                }
+
+                                msgs += message + "<br />";
                             }
                         }
+                    }
+                    catch
+                    {
                     }
                 }
             }
 
             return msgs;
+        }
+
+        private void GetContact(string userName)
+        {
+            string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={UserInfo.Instance.DateTimeDelt}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
+
+            BatchRequestModel brm = BatchRequestModel.Create();
+            brm.Count = 1;
+            brm.List.AddLast(new BatchItem { UserName = userName });
+
+            string json = JsonConvert.SerializeObject(brm);
+            using (StreamWriter sw = new StreamWriter(Path + "\\batch.txt", true))
+            {
+                sw.WriteLine(json);
+            }
+
+            string value = HttpHelper.GetResponseValue(url, HttpMethod.POST, json);
+            using (StreamWriter sw = new StreamWriter(Path + "\\member.txt", true))
+            {
+                sw.WriteLine(value);
+            }
+            InitialContactTree tree = JsonConvert.DeserializeObject<InitialContactTree>(value);
+            tree.Initial();
+            UserInfo.Instance.SetContact(tree.ContactList);
         }
     }
 }
