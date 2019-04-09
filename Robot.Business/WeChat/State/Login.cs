@@ -74,7 +74,7 @@ namespace Robot.Business.WeChat.State
 
                     //value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
 
-                    WebResponse webResponse = HttpHelper.CreateRequest(url, HttpMethod.POST, jsonData).GetResponse();
+                    WebResponse webResponse = HttpHelper.CreateRequest(u, HttpMethod.POST, jsonData).GetResponse();
                     value = HttpHelper.GetResponseValue(webResponse);
 
                     CookieCollection cookies = ((HttpWebResponse)webResponse).Cookies;
