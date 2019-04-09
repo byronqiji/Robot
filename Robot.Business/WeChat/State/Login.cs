@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Robot.Model.MemberInfo;
 using Robot.Model.RequestModel;
 using Robot.Model.WeChat;
 using Robot.Request;
 using System;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Web;
 
@@ -72,7 +72,14 @@ namespace Robot.Business.WeChat.State
 
                     string u = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={UserInfo.Instance.SID}&skey={UserInfo.Instance.SKey}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
 
-                    value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
+                    //value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
+
+                    WebResponse webResponse = HttpHelper.CreateRequest(url, HttpMethod.POST, jsonData).GetResponse();
+                    value = HttpHelper.GetResponseValue(webResponse);
+
+                    CookieCollection cookies = ((HttpWebResponse)webResponse).Cookies;
+                    if (cookies != null && cookies.Count > 0)
+                        UserInfo.Instance.Cookies = ((HttpWebResponse)webResponse).Cookies;
 
                     using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
                     {

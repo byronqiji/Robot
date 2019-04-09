@@ -21,7 +21,7 @@ namespace Robot.Request
             httpWebRequest.Date = DateTime.Now;
         }
 
-        internal WebResponse GetResponse(int i = 0)
+        public WebResponse GetResponse(int i = 0)
         {
             try
             {

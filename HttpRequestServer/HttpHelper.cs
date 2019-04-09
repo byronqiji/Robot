@@ -58,7 +58,7 @@ namespace Robot.Request
             return GetResponseValue(CreateRequest(url, method, data).GetResponse());
         }
 
-        private static BaseRequest CreateRequest(string url, HttpMethod method, string data)
+        public static BaseRequest CreateRequest(string url, HttpMethod method, string data)
         {
             BaseRequest request = new BaseRequest(url, method);
             request.SetCookies(UserInfo.Instance.Cookies);

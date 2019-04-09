@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Robot.Model.MemberInfo;
 using Robot.Model.RequestModel;
 using Robot.Model.WeChat;
