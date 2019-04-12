@@ -178,6 +178,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HttpRequestServer\Robot.Request.csproj">
+      <Project>{3E537E04-DD6E-43D8-B0AA-8A49CE6529C5}</Project>
+      <Name>Robot.Request</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Robot.Business\Robot.Business.csproj">
       <Project>{5c98c6ed-769f-45e4-a895-0e6413e9618c}</Project>
       <Name>Robot.Business</Name>

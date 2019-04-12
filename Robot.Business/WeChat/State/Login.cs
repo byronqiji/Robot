@@ -179,5 +179,9 @@ namespace Robot.Business.WeChat.State
             tree.Initial();
             UserInfo.Instance.SetContact(tree.ContactList);
         }
+
+        private void SendMessage()
+        {
+        }
     }
 }

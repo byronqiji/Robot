@@ -77,6 +77,15 @@ namespace Robot.Model.WeChat
             }
         }
 
+        public ulong LocalID
+        {
+            get
+            {
+                Random r = new Random();
+                return (ulong)(DateTime.Now - standardDateTime).TotalMilliseconds * 10000 + (ulong)r.Next(0, 1000);
+            }
+        }
+
         public ulong RequestCount
         {
             get
@@ -152,5 +161,20 @@ namespace Robot.Model.WeChat
         }
 
         public MemberModel User { get; set; }
+
+        public string GetGroupContact()
+        {
+            string groupInfo = string.Empty;
+            if (contactDic?.Count > 0)
+            {
+                foreach (KeyValuePair<string, BaseContactModel> keyValue in contactDic)
+                {
+                    if (keyValue.Value.MemberCount > 0)
+                        groupInfo += $"{keyValue.Value.NickName}&nbsp;&nbsp;{keyValue.Key} <br />";
+                }
+            }
+
+            return groupInfo;
+        }
     }
 }

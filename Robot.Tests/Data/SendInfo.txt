@@ -1,0 +1,35 @@
+﻿https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?lang=zh_CN&pass_ticket=t3sjJCoGGKrvZyulNu8a5dRsrf0C1Zg0AX0PaGhpMsp%252Ff18EBwpHQzpJRY1sJ3xT
+
+BaseRequest: {Uin: 1126851900, Sid: "vKo+h+1orQm6MY75", Skey: "@crypt_4af0643b_1e74f7b971bb04b4057b73d444febfad",…}
+	DeviceID: "e828860060465358"
+	Sid: "vKo+h+1orQm6MY75"
+	Skey: "@crypt_4af0643b_1e74f7b971bb04b4057b73d444febfad"
+	Uin: 1126851900
+
+Msg: {Type: 1, Content: "test", FromUserName: "@d21ce125f0113383bd4616b229bde8b8",…}
+	ClientMsgId: "15550504881140238"
+	Content: "test"
+	FromUserName: "@d21ce125f0113383bd4616b229bde8b8"
+	LocalID: "15550504881140238"
+	ToUserName: "@@1c9a86d62cf0904c84a5d53d76e7f2e938f4bd75872aae739e4d79874dbf1793"
+	Type: 1
+
+Scene: 0
+
+{
+	"BaseRequest": {
+		"DeviceId": "e552288132943668",
+		"Sid": "A/38Ut1FWBQ5aldW",
+		"Skey": "@crypt_4af0643b_d93827006080c38c3b724b9d47363f1e",
+		"Uin": 1126851900
+	},
+	"Msg": {
+		"ClientMsgId": "15550342882960502",
+		"Content": null,
+		"FromUserName": "@a4a1aec3029e25b037162bb3a33e345c",
+		"LocalID": "15550342882960502",
+		"ToUserName": null,
+		"Type": 1
+	},
+	"Scene": 0
+}

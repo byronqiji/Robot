@@ -13,6 +13,7 @@
         $(function () {
             flag = 0;
             setInterval(Monitor, 3000);
+            setInterval(getGroupInfo, 3000);
         });
 
         function Monitor()
@@ -37,13 +38,50 @@
                 })
             }
         }
+
+        function getGroupInfo() {
+            $.ajax({
+                type: "get",
+                url: "/WeChat/GroupInfo",
+                beforeSend: function (XMLHttpRequest) {
+                },
+                success: function (data, textStatus) {
+                    $("#spanContant").html(data);
+                },
+                complete: function (XMLHttpRequest, textStatus) {
+                },
+                error: function () {
+                }
+            })
+        }
+
+        function send() {
+            $.ajax({
+                type: "post",
+                url: "/WeChat/send",
+                data: { ToUserName: $("#txtContact").val(), Message: $("#txtMessag").val() },
+                beforeSend: function (XMLHttpRequest) {
+                },
+                success: function (data, textStatus) {
+                },
+                complete: function (XMLHttpRequest, textStatus) {
+                },
+                error: function () {
+                }
+            })
+        }
     </script>
 </head>
 
 
 <body>
-    <span id="spanTest"></span>
     <img src="https://login.weixin.qq.com/qrcode/@ViewBag.UUID" />
+    <br />
+    <span id="spanContant"></span>
+    <span id="spanTest"></span>
+    <input id="txtContact" type="text" style="width: 500px" />
+    <input id="txtMessag" type="text" style="width: 500px" />
+    <input id="btnSend" type="button" value="发送" onclick="javascript: send();" />
     <br />
     <span id="spanData"></span>
 </body>
