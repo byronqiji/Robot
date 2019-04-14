@@ -41,9 +41,9 @@ namespace Robot.Tests
 
             tree.Initial();
 
-            UserInfo.Instance.SetContact(tree.ContactList);
+            //UserInfo.Instance.SetContact(tree.ContactList);
 
-            UserInfo.Instance.SyncKeyInfo = tree.SyncKey;
+            //UserInfo.Instance.SyncKeyInfo = tree.SyncKey;
 
             foreach (var msg in tree.AddMsgList)
             {

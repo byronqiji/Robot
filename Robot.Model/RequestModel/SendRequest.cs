@@ -5,5 +5,7 @@
         public string ToUserName { get; set; }
 
         public string Message { get; set; }
+
+        public string UUID { get; set; }
     }
 }

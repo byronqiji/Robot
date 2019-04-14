@@ -22,7 +22,7 @@
                 flag = 1;
                 $.ajax({
                     type: "get",
-                    url: "/WeChat/Monitor",
+                    url: "/WeChat/Monitor?uuid=@ViewBag.UUID",
                     beforeSend: function (XMLHttpRequest) {
                     },
                     success: function (data, textStatus) {
@@ -42,7 +42,7 @@
         function getGroupInfo() {
             $.ajax({
                 type: "get",
-                url: "/WeChat/GroupInfo",
+                url: "/WeChat/GroupInfo?uuid=@ViewBag.UUID",
                 beforeSend: function (XMLHttpRequest) {
                 },
                 success: function (data, textStatus) {
@@ -59,7 +59,7 @@
             $.ajax({
                 type: "post",
                 url: "/WeChat/send",
-                data: { ToUserName: $("#txtContact").val(), Message: $("#txtMessag").val() },
+                data: { ToUserName: $("#txtContact").val(), Message: $("#txtMessag").val(), UUID: "@ViewBag.UUID" },
                 beforeSend: function (XMLHttpRequest) {
                 },
                 success: function (data, textStatus) {

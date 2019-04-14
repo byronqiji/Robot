@@ -1,4 +1,5 @@
 ﻿using Robot.Model.WeChat;
+using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -56,15 +57,20 @@ namespace Robot.Request
             }
         }
 
-        public static string GetResponseValue(string url, HttpMethod method, string data)
+        public static string GetResponseValue(object loginUrl)
         {
-            return GetResponseValue(CreateRequest(url, method, data).GetResponse());
+            throw new NotImplementedException();
         }
 
-        public static BaseRequest CreateRequest(string url, HttpMethod method, string data)
+        public static string GetResponseValue(string url, HttpMethod method, string data, CookieCollection cookies)
+        {
+            return GetResponseValue(CreateRequest(url, method, data, cookies).GetResponse());
+        }
+
+        public static BaseRequest CreateRequest(string url, HttpMethod method, string data, CookieCollection cookies)
         {
             BaseRequest request = new BaseRequest(url, method);
-            request.SetCookies(UserInfo.Instance.Cookies);
+            request.SetCookies(cookies);
             if (method == HttpMethod.POST)
                 request.SetData(data);
             return request;

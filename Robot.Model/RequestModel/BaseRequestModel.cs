@@ -17,14 +17,14 @@ namespace Robot.Model.RequestModel
 
         public ulong Uin { get; set; }
 
-        public static BaseRequestModel Create()
+        public static BaseRequestModel Create(UserInfo userInfo)
         {
             return new BaseRequestModel()
             {
-                Uin = UserInfo.Instance.UIN,
-                Sid = UserInfo.Instance.SID,
-                Skey = UserInfo.Instance.SKey,
-                DeviceId = UserInfo.Instance.DeviceID
+                Uin = userInfo.UIN,
+                Sid = userInfo.SID,
+                Skey = userInfo.SKey,
+                DeviceId = userInfo.DeviceID
             };
         }
     }

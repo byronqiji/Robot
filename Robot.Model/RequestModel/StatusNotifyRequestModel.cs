@@ -18,7 +18,7 @@ namespace Robot.Model.RequestModel
 
         public string ToUserName { get; set; }
 
-        public static StatusNotifyRequestModel Create()
+        public static StatusNotifyRequestModel Create(UserInfo userInfo)
         {
             //ClientMsgId: 1554473523742
             //Code: 3
@@ -26,10 +26,10 @@ namespace Robot.Model.RequestModel
             //ToUserName: "@e2dd3c6ee71c80018abbfbf9075b5187"
             StatusNotifyRequestModel model = new StatusNotifyRequestModel()
             {
-                BaseRequest = BaseRequestModel.Create(),
-                ClientMsgId = UserInfo.Instance.DateTimeDelt,
-                FromUserName = UserInfo.Instance.User.UserName,
-                ToUserName = UserInfo.Instance.User.UserName
+                BaseRequest = BaseRequestModel.Create(userInfo),
+                ClientMsgId = userInfo.DateTimeDelt,
+                FromUserName = userInfo.User.UserName,
+                ToUserName = userInfo.User.UserName
             };
 
             return model;

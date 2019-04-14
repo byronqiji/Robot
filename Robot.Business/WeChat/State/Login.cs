@@ -29,20 +29,20 @@ namespace Robot.Business.WeChat.State
         public override string Monitor()
         {
             string msgs = string.Empty;
-            string url = $"https://webpush.wx.qq.com/cgi-bin/mmwebwx-bin/synccheck?r={UserInfo.Instance.DateTimeDelt}&skey={HttpUtility.UrlEncode(UserInfo.Instance.SKey, Encoding.UTF8)}&sid={UserInfo.Instance.SID}&" +
-                $"uin={HttpUtility.UrlEncode(UserInfo.Instance.UIN.ToString(), Encoding.UTF8)}&deviceid={UserInfo.Instance.DeviceID}&synckey={HttpUtility.UrlEncode(UserInfo.Instance.SyncKey, Encoding.UTF8)}&_={UserInfo.Instance.RequestCount}";
+            //string url = $"https://webpush.wx.qq.com/cgi-bin/mmwebwx-bin/synccheck?r={userManager.UserInfo.DateTimeDelt}&skey={HttpUtility.UrlEncode(userManager.UserInfo.SKey, Encoding.UTF8)}&sid={userManager.UserInfo.SID}&" +
+            //    $"uin={HttpUtility.UrlEncode(userManager.UserInfo.UIN.ToString(), Encoding.UTF8)}&deviceid={userManager.UserInfo.DeviceID}&synckey={HttpUtility.UrlEncode(userManager.UserInfo.SyncKey, Encoding.UTF8)}&_={userManager.UserInfo.RequestCount}";
 
-            string value = HttpHelper.GetResponseValue(url, UserInfo.Instance.Cookies);
+            string value = HttpHelper.GetResponseValue(userManager.UserInfo.SyncCheckUrl, userManager.UserInfo.Cookies);
 
             using (StreamWriter sw = new StreamWriter(Path + "\\sync.txt", true))
             {
                 sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\t" + value);
             }
 
-            using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
-            {
-                sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {url}");
-            }
+            //using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
+            //{
+            //    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {url}");
+            //}
             
             string[] tempArr = value.Trim().Split('=');
 
@@ -55,12 +55,12 @@ namespace Robot.Business.WeChat.State
                     {
                         BaseRequest = new
                         {
-                            Uin = UserInfo.Instance.UIN,
-                            Sid = UserInfo.Instance.SID,
+                            Uin = userManager.UserInfo.UIN,
+                            Sid = userManager.UserInfo.SID,
                         },
 
-                        SyncKey = UserInfo.Instance.SyncKeyInfo,
-                        rr = UserInfo.Instance.DateTimeDelt,
+                        SyncKey = userManager.UserInfo.SyncKeyInfo,
+                        rr = userManager.UserInfo.DateTimeDelt,
                     };
 
                     string jsonData = JsonConvert.SerializeObject(data);
@@ -70,22 +70,22 @@ namespace Robot.Business.WeChat.State
                         sw.WriteLine(value);
                     }
 
-                    string u = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={UserInfo.Instance.SID}&skey={UserInfo.Instance.SKey}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
+                    //string u = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={userManager.UserInfo.SID}&skey={userManager.UserInfo.SKey}&lang=zh_CN&pass_ticket={userManager.UserInfo.PassTicket}";
 
                     //value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
 
-                    WebResponse webResponse = HttpHelper.CreateRequest(u, HttpMethod.POST, jsonData).GetResponse();
+                    WebResponse webResponse = HttpHelper.CreateRequest(userManager.UserInfo.SyncUrl, HttpMethod.POST, jsonData, userManager.UserInfo.Cookies).GetResponse();
                     value = HttpHelper.GetResponseValue(webResponse);
 
                     CookieCollection cookies = ((HttpWebResponse)webResponse).Cookies;
                     if (cookies != null && cookies.Count > 0)
-                        UserInfo.Instance.Cookies = ((HttpWebResponse)webResponse).Cookies;
+                        userManager.UserInfo.Cookies = ((HttpWebResponse)webResponse).Cookies;
 
-                    using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
-                    {
-                        sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {u}");
-                        sw.WriteLine(jsonData);
-                    }
+                    //using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
+                    //{
+                    //    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {u}");
+                    //    sw.WriteLine(jsonData);
+                    //}
 
                     using (StreamWriter sw = new StreamWriter(MessageFilePath, true))
                     {
@@ -97,9 +97,9 @@ namespace Robot.Business.WeChat.State
                         MessageContactTree mct = JsonConvert.DeserializeObject<MessageContactTree>(value);
                         mct.Initial();
 
-                        //UserInfo.Instance.SetContact(mct.ContactList);
+                        //userManager.UserInfo.SetContact(mct.ContactList);
                         if (mct.SyncKey.Count > 0)
-                            UserInfo.Instance.SyncKeyInfo = mct.SyncKey;
+                            userManager.UserInfo.SyncKeyInfo = mct.SyncKey;
 
                         if (mct.AddMsgCount > 0)
                         {
@@ -115,13 +115,13 @@ namespace Robot.Business.WeChat.State
                                 string sendUser = msg.Content.Substring(0, s - ":<br/>".Length);
 
 
-                                BaseContactModel bcm = UserInfo.Instance[msg.FromUserName];
+                                BaseContactModel bcm = userManager.UserInfo[msg.FromUserName];
                                 if (bcm == null)
                                 {
                                     GetContact(msg.FromUserName);
                                 }
 
-                                bcm = UserInfo.Instance[msg.FromUserName];
+                                bcm = userManager.UserInfo[msg.FromUserName];
 
                                 if (bcm != null)
                                 {
@@ -132,7 +132,7 @@ namespace Robot.Business.WeChat.State
                                         GetContact(msg.FromUserName);
                                     }
 
-                                    mm = UserInfo.Instance[msg.FromUserName][sendUser];
+                                    mm = userManager.UserInfo[msg.FromUserName][sendUser];
 
                                     if (mm != null)
                                     {
@@ -158,9 +158,9 @@ namespace Robot.Business.WeChat.State
 
         private void GetContact(string userName)
         {
-            string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={UserInfo.Instance.DateTimeDelt}&lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
+            //string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={userManager.UserInfo.DateTimeDelt}&lang=zh_CN&pass_ticket={userManager.UserInfo.PassTicket}";
 
-            BatchRequestModel brm = BatchRequestModel.Create();
+            BatchRequestModel brm = BatchRequestModel.Create(userManager.UserInfo);
             brm.Count = 1;
             brm.List.AddLast(new BatchItem { UserName = userName });
 
@@ -170,14 +170,14 @@ namespace Robot.Business.WeChat.State
                 sw.WriteLine(json);
             }
 
-            string value = HttpHelper.GetResponseValue(url, HttpMethod.POST, json);
+            string value = HttpHelper.GetResponseValue(userManager.UserInfo.BatchContactUrl, HttpMethod.POST, json, userManager.UserInfo.Cookies);
             using (StreamWriter sw = new StreamWriter(Path + "\\member.txt", true))
             {
                 sw.WriteLine(value);
             }
             InitialContactTree tree = JsonConvert.DeserializeObject<InitialContactTree>(value);
             tree.Initial();
-            UserInfo.Instance.SetContact(tree.ContactList);
+            userManager.UserInfo.SetContact(tree.ContactList);
         }
 
         private void SendMessage()

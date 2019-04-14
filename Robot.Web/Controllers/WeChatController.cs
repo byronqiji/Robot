@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
+using Robot.Business;
 using Robot.Business.WeChat;
 using Robot.Model.RequestModel;
 using Robot.Model.WeChat;
 using Robot.Request;
 using System.IO;
-using System.Threading;
 using System.Web.Mvc;
 
 namespace Robot.Web.Controllers
@@ -14,9 +14,12 @@ namespace Robot.Web.Controllers
         // GET: WeChat
         public ActionResult Index()
         {
-            UserManager.Single.Start();
+            UserManager userManager = new UserManager();
+            userManager.Start();
 
-            ViewBag.UUID = UserInfo.Instance.UUID;
+            ViewBag.UUID = userManager.UserInfo.UUID;
+
+            UserPool.Instance.AddUser(userManager);
 
             return View();
         }
@@ -24,59 +27,76 @@ namespace Robot.Web.Controllers
         [HttpPost]
         public void Send(SendRequest req)
         {
-            //             https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?lang=zh_CN&pass_ticket=t3sjJCoGGKrvZyulNu8a5dRsrf0C1Zg0AX0PaGhpMsp%252Ff18EBwpHQzpJRY1sJ3xT
-            string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
+            if (string.IsNullOrEmpty(req.UUID))
+                return;
 
-            SendModel sm = new SendModel()
+            UserManager um = UserPool.Instance[req.UUID];
+            if (um != null && um.UserInfo != null)
             {
-                BaseRequest = BaseRequestModel.Create(),
-                Msg = new MessageModel()
+                //             https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?lang=zh_CN&pass_ticket=t3sjJCoGGKrvZyulNu8a5dRsrf0C1Zg0AX0PaGhpMsp%252Ff18EBwpHQzpJRY1sJ3xT
+                //string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
+
+                SendModel sm = new SendModel()
                 {
-                    FromUserName = UserInfo.Instance.User.UserName,
-                    ToUserName = req.ToUserName,
-                    Content = req.Message,
-                    Type = 1,
-                    LocalID = UserInfo.Instance.LocalID.ToString(),
-                },
-                Scene = 0
-            };
+                    BaseRequest = BaseRequestModel.Create(um.UserInfo),
+                    Msg = new MessageModel()
+                    {
+                        FromUserName = um.UserInfo.User.UserName,
+                        ToUserName = req.ToUserName,
+                        Content = req.Message,
+                        Type = 1,
+                        LocalID = um.UserInfo.LocalID.ToString(),
+                    },
+                    Scene = 0
+                };
 
-            sm.Msg.ClientMsgId = sm.Msg.LocalID;
+                sm.Msg.ClientMsgId = sm.Msg.LocalID;
 
-            string j = JsonConvert.SerializeObject(sm);
+                string j = JsonConvert.SerializeObject(sm);
 
-            string path = System.AppDomain.CurrentDomain.BaseDirectory + "\\data\\send.txt";
-            using (StreamWriter sw = new StreamWriter(path, true))
-            {
-                sw.WriteLine(j);
+                string path = System.AppDomain.CurrentDomain.BaseDirectory + "\\data\\send.txt";
+                using (StreamWriter sw = new StreamWriter(path, true))
+                {
+                    sw.WriteLine(j);
+                }
+
+                string value = HttpHelper.GetResponseValue(um.UserInfo.SendUrl, HttpMethod.POST, j, um.UserInfo.Cookies);
             }
-
-            string value = HttpHelper.GetResponseValue(url, HttpMethod.POST, j);
         }
 
-        public string GroupInfo()
+        public string GroupInfo(string uuid)
         {
-            if (UserInfo.Instance == null)
-                Thread.Sleep(1000);
-
-            try
-            {
-                return UserInfo.Instance.GetGroupContact();
-            }
-            catch
-            {
+            if (string.IsNullOrEmpty(uuid))
                 return string.Empty;
+
+            UserManager um = UserPool.Instance[uuid];
+            if (um != null && um.UserInfo != null)
+            {
+                try
+                {
+                    return um.UserInfo.GetGroupContact();
+                }
+                catch
+                {
+                    return string.Empty;
+                }
             }
+
+            return string.Empty;
         }
 
-        public string Monitor()
+        public string Monitor(string uuid)
         {
-            if (UserManager.Single.State == null)
-                Thread.Sleep(1000);
+            if (string.IsNullOrEmpty(uuid))
+                return string.Empty;
 
             try
             {
-                return UserManager.Single.State.Monitor();
+                UserManager um = UserPool.Instance[uuid];
+                if (um != null && um.State != null)
+                    return um.State.Monitor();
+
+                return string.Empty;
             }
             catch
             {

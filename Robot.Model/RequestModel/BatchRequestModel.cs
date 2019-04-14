@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Robot.Model.WeChat;
+using System.Collections.Generic;
 
 namespace Robot.Model.RequestModel
 {
@@ -10,11 +11,11 @@ namespace Robot.Model.RequestModel
 
         public LinkedList<BatchItem> List { get; set; }
 
-        public static BatchRequestModel Create()
+        public static BatchRequestModel Create(UserInfo userInfo)
         {
             BatchRequestModel model = new BatchRequestModel()
             {
-                BaseRequest = BaseRequestModel.Create(),
+                BaseRequest = BaseRequestModel.Create(userInfo),
                 List = new LinkedList<BatchItem>()
             };
 

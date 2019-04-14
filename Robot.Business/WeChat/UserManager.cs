@@ -6,20 +6,20 @@ namespace Robot.Business.WeChat
 {
     public class UserManager
     {
-        private static UserManager single;
-        public static UserManager Single
-        {
-            get
-            {
-                if (single != null)
-                    return single;
+        //private static UserManager single;
+        //public static UserManager Single
+        //{
+        //    get
+        //    {
+        //        if (single != null)
+        //            return single;
 
-                UserManager temp = new UserManager();
-                Interlocked.CompareExchange(ref single, temp, null);
+        //        UserManager temp = new UserManager();
+        //        Interlocked.CompareExchange(ref single, temp, null);
 
-                return single;
-            }
-        }
+        //        return single;
+        //    }
+        //}
 
         public IUserState State { get; internal set; }
         internal IUserState QRCodeInitial { get; private set; }
@@ -27,16 +27,16 @@ namespace Robot.Business.WeChat
         internal IUserState Scaned { get; private set; }
         internal IUserState Login { get; private set; }
 
-        //public UserInfo User { get; private set; }
+        public UserInfo UserInfo { get; set; }
 
-        private UserManager()
+        public UserManager()
         {
+            UserInfo = new UserInfo();
+
             QRCodeInitial = new QRCodeInitial(this);
             ReadyScan = new ReadyScan(this);
             Scaned = new Scaned(this);
             Login = new Login(this);
-
-            //User = new UserInfo();
         }
 
         public void Start()
