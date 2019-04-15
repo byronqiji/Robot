@@ -16,6 +16,22 @@ namespace Robot.Business
             }
         }
 
+        public UserManager GetUserManagerByNickName(string nickName)
+        {
+            if (userMap != null)
+            {
+                foreach (KeyValuePair<string, UserManager> keyValue in userMap)
+                {
+                    if (keyValue.Value?.UserInfo?.User?.NickName == nickName)
+                    {
+                        return keyValue.Value;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public static UserPool Instance
         {
             get

@@ -213,10 +213,5 @@ namespace Robot.Model.WeChat
         {
             return ((IEnumerable<KeyValuePair<string, BaseContactModel>>)sendGroup).GetEnumerator();
         }
-
-        //IEnumerator IEnumerable.GetEnumerator()
-        //{
-        //    return ((IEnumerable<KeyValuePair<string, BaseContactModel>>)sendGroup).GetEnumerator();
-        //}
     }
 }

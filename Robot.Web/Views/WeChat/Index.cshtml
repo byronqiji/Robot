@@ -72,7 +72,6 @@
         }
 
         function setIsSend(checkBoxObj, contactUserName) {
-            //alert(checkBoxObj.checked);
             $.ajax({
                 type: "post",
                 url: "/WeChat/setSend",
@@ -93,8 +92,8 @@
 
 <body>
     <img src="https://login.weixin.qq.com/qrcode/@ViewBag.UUID" />
-    @*<br />
-    <input id="check_key" type="checkbox" onchange="javascript: setIsSend(this, 'userName');" />*@
+    <br />
+    <a href="/WeChat/Index" target="_blank">新增微信号</a>
     <br />
     <span id="spanContant"></span>
     <span id="spanTest"></span>
