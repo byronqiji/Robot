@@ -1,37 +1,24 @@
 ﻿using Robot.Model.MemberInfo;
+using Robot.Model.RequestModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Web;
 
 namespace Robot.Model.WeChat
 {
-    public class UserInfo
-    {
-        //private static UserInfo single;
-
-        //public static UserInfo Instance
-        //{
-        //    get
-        //    {
-        //        if (single != null)
-        //            return single;
-
-        //        UserInfo temp = new UserInfo();
-        //        Interlocked.CompareExchange(ref single, temp, null);
-
-        //        return single;
-        //    }
-        //}
-        
+    public class UserInfo : IEnumerable<KeyValuePair<string, BaseContactModel>>
+    {        
         private static readonly DateTime standardDateTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 8, 0, 0));
 
         int tip;
         private ulong requestCount;
 
         private Dictionary<string, BaseContactModel> contactDic;
+
+        private Dictionary<string, BaseContactModel> sendGroup;
 
         public SyncKeyModel SyncKeyInfo { get; set; }
 
@@ -41,6 +28,7 @@ namespace Robot.Model.WeChat
 
             tip = 1;
             contactDic = new Dictionary<string, BaseContactModel>();
+            sendGroup = new Dictionary<string, BaseContactModel>();
         }
 
         public string UUID { get; set; }
@@ -147,6 +135,22 @@ namespace Robot.Model.WeChat
             }
         }
 
+        public void SetSendGroup(SetSendRrequest setSendModel)
+        {
+            if (!setSendModel.IsSend)
+            {
+                if (sendGroup.ContainsKey(setSendModel.UserName))
+                    sendGroup.Remove(setSendModel.UserName);
+            }
+            else
+            {
+                if (contactDic.ContainsKey(setSendModel.UserName) && !sendGroup.ContainsKey(setSendModel.UserName))
+                {
+                    sendGroup.Add(setSendModel.UserName, contactDic[setSendModel.UserName]);
+                }
+            }
+        }
+
         public BaseContactModel this[string userName]
         {
             get
@@ -159,8 +163,7 @@ namespace Robot.Model.WeChat
         }
 
         public MemberModel User { get; set; }
-
-        //string url = string.Format("https://login.wx.qq.com/jslogin?appid=wx782c26e4c19acffb&redirect_uri=https%3A%2F%2Fwx.qq.com%2Fcgi-bin%2Fmmwebwx-bin%2Fwebwxnewloginpage&fun=new&lang=zh_CN&_={0}", userManager.UserInfo.RequestCount);
+        
         public string QRInitialUrl => $"https://login.wx.qq.com/jslogin?appid=wx782c26e4c19acffb&redirect_uri=https%3A%2F%2Fwx.qq.com%2Fcgi-bin%2Fmmwebwx-bin%2Fwebwxnewloginpage&fun=new&lang=zh_CN&_={RequestCount}";
 
         public string LoginUrl => $"https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid={UUID}&tip={RequestCount}&_={TIP}"; //, UserInfo.Instance.UUID, UserInfo.Instance.RequestCount, UserInfo.Instance.TIP);
@@ -187,11 +190,33 @@ namespace Robot.Model.WeChat
                 foreach (KeyValuePair<string, BaseContactModel> keyValue in contactDic)
                 {
                     if (keyValue.Value.MemberCount > 0)
-                        groupInfo += $"{keyValue.Value.NickName}&nbsp;&nbsp;{keyValue.Key} <br />";
+                    {
+                        // < input id = "check_key" type = "checkbox" onchange = "javascript: setIsSend(this, 'userName');" />
+                        if (sendGroup.ContainsKey(keyValue.Key))
+                            groupInfo += $"<input id='check_{keyValue.Key}' checked='checked' type='checkbox' onchange='javascript: setIsSend(this, \"{keyValue.Key}\");' />{keyValue.Value.NickName}&nbsp;&nbsp;{keyValue.Key} <br />";
+                        else
+                            groupInfo += $"<input id='check_{keyValue.Key}' type='checkbox' onchange='javascript: setIsSend(this, \"{keyValue.Key}\");' />{keyValue.Value.NickName}&nbsp;&nbsp;{keyValue.Key} <br />";
+
+                    }
                 }
             }
 
             return groupInfo;
         }
+
+        public IEnumerator<KeyValuePair<string, BaseContactModel>> GetEnumerator()
+        {
+            return sendGroup.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<KeyValuePair<string, BaseContactModel>>)sendGroup).GetEnumerator();
+        }
+
+        //IEnumerator IEnumerable.GetEnumerator()
+        //{
+        //    return ((IEnumerable<KeyValuePair<string, BaseContactModel>>)sendGroup).GetEnumerator();
+        //}
     }
 }

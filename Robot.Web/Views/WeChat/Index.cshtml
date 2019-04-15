@@ -13,7 +13,7 @@
         $(function () {
             flag = 0;
             setInterval(Monitor, 3000);
-            setInterval(getGroupInfo, 3000);
+            setInterval(getGroupInfo, 10000);
         });
 
         function Monitor()
@@ -59,7 +59,24 @@
             $.ajax({
                 type: "post",
                 url: "/WeChat/send",
-                data: { ToUserName: $("#txtContact").val(), Message: $("#txtMessag").val(), UUID: "@ViewBag.UUID" },
+                data: { Message: $("#txtMessag").val(), UUID: "@ViewBag.UUID" },
+                beforeSend: function (XMLHttpRequest) {
+                },
+                success: function (data, textStatus) {
+                },
+                complete: function (XMLHttpRequest, textStatus) {
+                },
+                error: function () {
+                }
+            })
+        }
+
+        function setIsSend(checkBoxObj, contactUserName) {
+            //alert(checkBoxObj.checked);
+            $.ajax({
+                type: "post",
+                url: "/WeChat/setSend",
+                data: { userName: contactUserName, isSend: checkBoxObj.checked, UUID: "@ViewBag.UUID" },
                 beforeSend: function (XMLHttpRequest) {
                 },
                 success: function (data, textStatus) {
@@ -76,10 +93,11 @@
 
 <body>
     <img src="https://login.weixin.qq.com/qrcode/@ViewBag.UUID" />
+    @*<br />
+    <input id="check_key" type="checkbox" onchange="javascript: setIsSend(this, 'userName');" />*@
     <br />
     <span id="spanContant"></span>
     <span id="spanTest"></span>
-    <input id="txtContact" type="text" style="width: 500px" />
     <input id="txtMessag" type="text" style="width: 500px" />
     <input id="btnSend" type="button" value="发送" onclick="javascript: send();" />
     <br />

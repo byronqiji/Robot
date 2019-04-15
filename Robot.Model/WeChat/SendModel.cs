@@ -6,7 +6,7 @@ namespace Robot.Model.WeChat
     { 
         public BaseRequestModel BaseRequest { get; set; }
 
-        public MessageModel Msg { get; set; }
+        public MessageSendModel Msg { get; set; }
 
         public int Scene { get; set; }
     }

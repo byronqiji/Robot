@@ -70,8 +70,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestModel\BaseRequestModel.cs" />
     <Compile Include="RequestModel\SendRequest.cs" />
+    <Compile Include="RequestModel\SetSendRrequest.cs" />
     <Compile Include="RequestModel\StatusNotifyRequestModel.cs" />
-    <Compile Include="WeChat\MessageModel.cs" />
+    <Compile Include="WeChat\MessageSendModel.cs" />
     <Compile Include="WeChat\SendModel.cs" />
     <Compile Include="WeChat\SyncCheck.cs" />
     <Compile Include="WeChat\UserInfo.cs" />

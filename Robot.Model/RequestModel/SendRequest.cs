@@ -2,7 +2,7 @@
 {
     public class SendRequest
     {
-        public string ToUserName { get; set; }
+        //public string ToUserName { get; set; }
 
         public string Message { get; set; }
 

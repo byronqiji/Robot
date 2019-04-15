@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Robot.Business;
 using Robot.Business.WeChat;
+using Robot.Model.MemberInfo;
 using Robot.Model.RequestModel;
 using Robot.Model.WeChat;
 using Robot.Request;
+using System.Collections.Generic;
 using System.IO;
 using System.Web.Mvc;
 
@@ -33,34 +35,34 @@ namespace Robot.Web.Controllers
             UserManager um = UserPool.Instance[req.UUID];
             if (um != null && um.UserInfo != null)
             {
-                //             https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?lang=zh_CN&pass_ticket=t3sjJCoGGKrvZyulNu8a5dRsrf0C1Zg0AX0PaGhpMsp%252Ff18EBwpHQzpJRY1sJ3xT
-                //string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?lang=zh_CN&pass_ticket={UserInfo.Instance.PassTicket}";
-
                 SendModel sm = new SendModel()
                 {
                     BaseRequest = BaseRequestModel.Create(um.UserInfo),
-                    Msg = new MessageModel()
+                    Msg = new MessageSendModel()
                     {
                         FromUserName = um.UserInfo.User.UserName,
-                        ToUserName = req.ToUserName,
                         Content = req.Message,
                         Type = 1,
                         LocalID = um.UserInfo.LocalID.ToString(),
                     },
                     Scene = 0
                 };
-
                 sm.Msg.ClientMsgId = sm.Msg.LocalID;
 
-                string j = JsonConvert.SerializeObject(sm);
-
-                string path = System.AppDomain.CurrentDomain.BaseDirectory + "\\data\\send.txt";
-                using (StreamWriter sw = new StreamWriter(path, true))
+                foreach (KeyValuePair<string, BaseContactModel> item in um.UserInfo)
                 {
-                    sw.WriteLine(j);
-                }
+                    sm.Msg.ToUserName = item.Key;
 
-                string value = HttpHelper.GetResponseValue(um.UserInfo.SendUrl, HttpMethod.POST, j, um.UserInfo.Cookies);
+                    string j = JsonConvert.SerializeObject(sm);
+
+                    string path = System.AppDomain.CurrentDomain.BaseDirectory + "\\data\\send.txt";
+                    using (StreamWriter sw = new StreamWriter(path, true))
+                    {
+                        sw.WriteLine(j);
+                    }
+
+                    string value = HttpHelper.GetResponseValue(um.UserInfo.SendUrl, HttpMethod.POST, j, um.UserInfo.Cookies);
+                }
             }
         }
 
@@ -102,6 +104,18 @@ namespace Robot.Web.Controllers
             {
                 return string.Empty;
             }
+        }
+
+        [HttpPost]
+        public void SetSend(SetSendRrequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.UUID))
+                return;
+
+            UserManager um = UserPool.Instance[request.UUID];
+            if (um != null && um.State != null)
+                um.UserInfo.SetSendGroup(request);
+
         }
     }
 }
