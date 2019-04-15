@@ -6,8 +6,6 @@ using Robot.Request;
 using System;
 using System.IO;
 using System.Net;
-using System.Text;
-using System.Web;
 
 namespace Robot.Business.WeChat.State
 {
@@ -29,20 +27,12 @@ namespace Robot.Business.WeChat.State
         public override string Monitor()
         {
             string msgs = string.Empty;
-            //string url = $"https://webpush.wx.qq.com/cgi-bin/mmwebwx-bin/synccheck?r={userManager.UserInfo.DateTimeDelt}&skey={HttpUtility.UrlEncode(userManager.UserInfo.SKey, Encoding.UTF8)}&sid={userManager.UserInfo.SID}&" +
-            //    $"uin={HttpUtility.UrlEncode(userManager.UserInfo.UIN.ToString(), Encoding.UTF8)}&deviceid={userManager.UserInfo.DeviceID}&synckey={HttpUtility.UrlEncode(userManager.UserInfo.SyncKey, Encoding.UTF8)}&_={userManager.UserInfo.RequestCount}";
-
             string value = HttpHelper.GetResponseValue(userManager.UserInfo.SyncCheckUrl, userManager.UserInfo.Cookies);
 
             using (StreamWriter sw = new StreamWriter(Path + "\\sync.txt", true))
             {
                 sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\t" + value);
             }
-
-            //using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
-            //{
-            //    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {url}");
-            //}
             
             string[] tempArr = value.Trim().Split('=');
 
@@ -70,22 +60,12 @@ namespace Robot.Business.WeChat.State
                         sw.WriteLine(value);
                     }
 
-                    //string u = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={userManager.UserInfo.SID}&skey={userManager.UserInfo.SKey}&lang=zh_CN&pass_ticket={userManager.UserInfo.PassTicket}";
-
-                    //value = HttpHelper.GetResponseValue(u, HttpMethod.POST, jsonData);
-
                     WebResponse webResponse = HttpHelper.CreateRequest(userManager.UserInfo.SyncUrl, HttpMethod.POST, jsonData, userManager.UserInfo.Cookies).GetResponse();
                     value = HttpHelper.GetResponseValue(webResponse);
 
                     CookieCollection cookies = ((HttpWebResponse)webResponse).Cookies;
                     if (cookies != null && cookies.Count > 0)
                         userManager.UserInfo.Cookies = ((HttpWebResponse)webResponse).Cookies;
-
-                    //using (StreamWriter sw = new StreamWriter(UrlFilePath, true))
-                    //{
-                    //    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}: {u}");
-                    //    sw.WriteLine(jsonData);
-                    //}
 
                     using (StreamWriter sw = new StreamWriter(MessageFilePath, true))
                     {
@@ -96,8 +76,7 @@ namespace Robot.Business.WeChat.State
                     {
                         MessageContactTree mct = JsonConvert.DeserializeObject<MessageContactTree>(value);
                         mct.Initial();
-
-                        //userManager.UserInfo.SetContact(mct.ContactList);
+                        
                         if (mct.SyncKey.Count > 0)
                             userManager.UserInfo.SyncKeyInfo = mct.SyncKey;
 
@@ -158,8 +137,6 @@ namespace Robot.Business.WeChat.State
 
         private void GetContact(string userName)
         {
-            //string url = $"https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={userManager.UserInfo.DateTimeDelt}&lang=zh_CN&pass_ticket={userManager.UserInfo.PassTicket}";
-
             BatchRequestModel brm = BatchRequestModel.Create(userManager.UserInfo);
             brm.Count = 1;
             brm.List.AddLast(new BatchItem { UserName = userName });
@@ -178,10 +155,6 @@ namespace Robot.Business.WeChat.State
             InitialContactTree tree = JsonConvert.DeserializeObject<InitialContactTree>(value);
             tree.Initial();
             userManager.UserInfo.SetContact(tree.ContactList);
-        }
-
-        private void SendMessage()
-        {
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Robot.Model.WeChat;
-using Robot.Request;
+﻿using Robot.Request;
 
 namespace Robot.Business.WeChat.State
 {
@@ -20,17 +19,11 @@ namespace Robot.Business.WeChat.State
 
         public override void Start()
         {
-            //https://login.wx.qq.com/jslogin?appid=wx782c26e4c19acffb&redirect_uri=https%3A%2F%2Fwx.qq.com%2Fcgi-bin%2Fmmwebwx-bin%2Fwebwxnewloginpage&fun=new&lang=zh_CN&_=1497712047909
-            //string url = string.Format("https://login.wx.qq.com/jslogin?appid=wx782c26e4c19acffb&redirect_uri=https%3A%2F%2Fwx.qq.com%2Fcgi-bin%2Fmmwebwx-bin%2Fwebwxnewloginpage&fun=new&lang=zh_CN&_={0}", userManager.User.RequestCount);
-            
             string value = HttpHelper.GetResponseValue(userManager.UserInfo.QRInitialUrl);
 
             if (value != string.Empty)
             {
-                //window.QRLogin.code = 200; window.QRLogin.uuid = "AbT66_9SIw==";
-
                 userManager.UserInfo.UUID = value.Split('\"')[1];
-                //UserInfoPool.Instance.AddUserInfo(userInfo);
                 userManager.State = userManager.ReadyScan;
             }
         }
